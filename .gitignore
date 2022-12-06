@@ -1,0 +1,7 @@
+target/
+/src/main/resources/application.properties
+.vscode/
+.mvn
+/src/test
+mvnw
+mvnw.cmd
