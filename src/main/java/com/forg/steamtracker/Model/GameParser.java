@@ -20,8 +20,8 @@ public class GameParser {
     @Autowired
     GameRepository gameRepository;
 
-    public void parse(String count, String userID, String key){
-        link = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?count="+count+"&key="+key+"&steamid="+userID;
+    public void parse(String userID, String key){
+        link = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?count=10&key="+key+"&steamid="+userID;
         try {
             URL url = new URL(link);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();

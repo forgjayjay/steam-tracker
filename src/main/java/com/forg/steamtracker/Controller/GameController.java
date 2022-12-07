@@ -27,8 +27,8 @@ public class GameController {
     }
 
     @GetMapping("/my-games")
-    public String displayMyGames(@RequestParam String count, @RequestParam String userID){
-        gameParser.parse(count, userID, key);
+    public String displayMyGames(@RequestParam String userID){
+        gameParser.parse(userID, key);
         return "my_games";
     }
 }
