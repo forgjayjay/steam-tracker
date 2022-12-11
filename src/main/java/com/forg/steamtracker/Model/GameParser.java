@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,18 +22,24 @@ public class GameParser {
 
     private String link;
 
-    private boolean updated = false;
-
     @Autowired
     GameRepository gameRepository;
 
     public String parse(String userID, String key){
-        if(!updated) update(userID, key);
+        /*if(!updated)*/ update(userID, key);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectMapper mapper = new ObjectMapper();
         byte[] data;
         try {
-            mapper.writeValue(out, gameRepository.findAll());
+            List<Game> games = gameRepository.findAll();
+            List<Game> gamesToReturn = new ArrayList<>();
+
+            for (Game game : games) {
+                if(game.getOwnerID().equals(userID)) {
+                    gamesToReturn.add(game);
+                }
+            }
+            mapper.writeValue(out, gamesToReturn);
             data = out.toByteArray();
             return new String(data);
         } catch (IOException e) {
@@ -50,7 +58,6 @@ public class GameParser {
 
     public void update(String userID, String key){
         System.out.println("Updating database . . .");
-        updated = true;
         link = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?count=10&key="+key+"&steamid="+userID;
         try {
             URL url = new URL(link);
@@ -76,11 +83,13 @@ public class GameParser {
                 game.setPlaytime_forever(jsonObject.getInt("playtime_forever"));
                 game.setPlaytime_weeks(jsonObject.getInt("playtime_2weeks"));
                 game.setPreviousTime(game.getPlaytime_forever());
+                game.setOwnerID(userID);
                 Game existingGame = gameRepository.findByName(game.getName());
                 if(existingGame!=null){
                     existingGame.setMinutes_played_yesterday(existingGame.getPlaytime_forever() - existingGame.getPreviousTime());
                     existingGame.setPreviousTime(existingGame.getPlaytime_forever());
                     existingGame.setPlaytime_forever(game.getPlaytime_forever());
+                    existingGame.setOwnerID(userID);
                     existingGame.setMinutes_played_today(existingGame.getPlaytime_forever() - existingGame.getPreviousTime());
                     gameRepository.save(existingGame);
                 }else {
@@ -90,7 +99,7 @@ public class GameParser {
                 // System.out.println(jsonObject.toString());
             }
         } catch (Exception e) {
-            System.out.println("Error occurred: "+e.getMessage());;
+            System.out.println("Error occurred: "+e.getMessage());
         }
     }
 }

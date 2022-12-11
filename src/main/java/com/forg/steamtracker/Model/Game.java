@@ -16,10 +16,10 @@ public class Game {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "app_id", unique = true, nullable = false)
+    @Column(name = "app_id", unique = false, nullable = false)
     private long appid;
 
-    @Column(name = "game_name", unique = true, nullable = false)
+    @Column(name = "game_name", unique = false, nullable = false)
     private String name;
     
     @Column(name = "previous_time_played",  nullable = true)
@@ -31,11 +31,20 @@ public class Game {
     @Column(name = "playtime_weeks",  nullable = true)
     private int playtime_weeks;
 
+    @Column(name = "owner_id",unique = false, nullable = false)
+    private String ownerID;
+
     @Transient
     private int minutes_played_yesterday;
     @Transient
     private int minutes_played_today;
 
+    public String getOwnerID() {
+        return ownerID;
+    }
+    public void setOwnerID(String ownerID) {
+        this.ownerID = ownerID;
+    }
     public void setMinutes_played_today(int minutes_played_today) {
         this.minutes_played_today = minutes_played_today;
     }
@@ -84,7 +93,7 @@ public class Game {
     }
     @Override
     public String toString() {
-        return "[ Name: " +name + "; App ID: "+ appid + "; Playtime total: "+ playtime_forever + "; Playtime 2 weeks: "+ playtime_weeks + "; Playtime today: " + minutes_played_today+" ]";
+        return "[ Name: " +name + "; App ID: "+ appid + "; Owner ID: " + ownerID + "; Playtime total: "+ playtime_forever + "; Playtime 2 weeks: "+ playtime_weeks + "; Playtime today: " + minutes_played_today+" ]";
     }
     @Override
     public boolean equals(Object arg0) {
