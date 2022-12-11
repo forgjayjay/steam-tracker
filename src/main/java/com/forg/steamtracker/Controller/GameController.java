@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.forg.steamtracker.Model.GameParser;
 import com.forg.steamtracker.Model.GameRepository;
@@ -27,8 +28,8 @@ public class GameController {
     }
 
     @GetMapping("/my-games")
+    @ResponseBody
     public String displayMyGames(@RequestParam String userID){
-        gameParser.parse(userID, key);
-        return "my_games";
+        return gameParser.parse(userID, key);
     }
 }

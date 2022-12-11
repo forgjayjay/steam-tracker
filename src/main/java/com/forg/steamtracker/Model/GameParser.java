@@ -1,6 +1,8 @@
 package com.forg.steamtracker.Model;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -10,6 +12,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.stereotype.Service;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 @Configurable
@@ -17,10 +20,37 @@ public class GameParser {
 
     private String link;
 
+    private boolean updated = false;
+
     @Autowired
     GameRepository gameRepository;
 
-    public void parse(String userID, String key){
+    public String parse(String userID, String key){
+        if(!updated) update(userID, key);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ObjectMapper mapper = new ObjectMapper();
+        byte[] data;
+        try {
+            mapper.writeValue(out, gameRepository.findAll());
+            data = out.toByteArray();
+            return new String(data);
+        } catch (IOException e) {
+            System.out.println("Error occurred: "+e.getMessage());
+        }
+        // for (Game game : gameRepository.findAll()) {
+        //     try {
+        //         mapper.writeValueAsString(game);
+        //     } catch (JsonProcessingException e) {
+        //         System.out.println("Error occurred: "+e.getMessage());
+        //     }
+        // }
+        //System.out.println(link);
+        return "";
+    }
+
+    public void update(String userID, String key){
+        System.out.println("Updating database . . .");
+        updated = true;
         link = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?count=10&key="+key+"&steamid="+userID;
         try {
             URL url = new URL(link);
@@ -45,14 +75,22 @@ public class GameParser {
                 game.setAppid(jsonObject.getLong("appid"));
                 game.setPlaytime_forever(jsonObject.getInt("playtime_forever"));
                 game.setPlaytime_weeks(jsonObject.getInt("playtime_2weeks"));
-                gameRepository.save(game);
-                System.out.println(game.toString());
+                game.setPreviousTime(game.getPlaytime_forever());
+                Game existingGame = gameRepository.findByName(game.getName());
+                if(existingGame!=null){
+                    existingGame.setMinutes_played_yesterday(existingGame.getPlaytime_forever() - existingGame.getPreviousTime());
+                    existingGame.setPreviousTime(existingGame.getPlaytime_forever());
+                    existingGame.setPlaytime_forever(game.getPlaytime_forever());
+                    existingGame.setMinutes_played_today(existingGame.getPlaytime_forever() - existingGame.getPreviousTime());
+                    gameRepository.save(existingGame);
+                }else {
+                    gameRepository.save(game);
+                }
+                    System.out.println(game.toString());
                 // System.out.println(jsonObject.toString());
             }
-           
         } catch (Exception e) {
             System.out.println("Error occurred: "+e.getMessage());;
         }
-        //System.out.println(link);
     }
 }

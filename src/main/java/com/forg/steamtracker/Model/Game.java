@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "game")
@@ -30,13 +31,22 @@ public class Game {
     @Column(name = "playtime_weeks",  nullable = true)
     private int playtime_weeks;
 
-    public Game(String name, int previousTime, int playtime_forever){
-        this.name = name;
-        this.previousTime = previousTime;
-        this.playtime_forever = playtime_forever;
-    }
+    @Transient
+    private int minutes_played_yesterday;
+    @Transient
+    private int minutes_played_today;
 
-    public Game(){
+    public void setMinutes_played_today(int minutes_played_today) {
+        this.minutes_played_today = minutes_played_today;
+    }
+    public void setMinutes_played_yesterday(int minutes_played_yesterday) {
+        this.minutes_played_yesterday = minutes_played_yesterday;
+    }
+    public int getMinutes_played_today() {
+        return minutes_played_today;
+    }
+    public int getMinutes_played_yesterday() {
+        return minutes_played_yesterday;
     }
 
     public void setName(String name) {
@@ -74,6 +84,14 @@ public class Game {
     }
     @Override
     public String toString() {
-        return "[ Name: " +name + "; App ID: "+ appid + "; Playtime total: "+ playtime_forever + "; Playtime 2 weeks: "+ playtime_weeks + " ]";
+        return "[ Name: " +name + "; App ID: "+ appid + "; Playtime total: "+ playtime_forever + "; Playtime 2 weeks: "+ playtime_weeks + "; Playtime today: " + minutes_played_today+" ]";
+    }
+    @Override
+    public boolean equals(Object arg0) {
+        return name.equals(arg0);
+    }
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
 }
