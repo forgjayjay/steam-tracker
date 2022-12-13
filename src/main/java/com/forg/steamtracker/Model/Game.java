@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "game")
@@ -15,10 +16,10 @@ public class Game {
     @Column(name = "id")
     private int id;
 
-    @Column(name = "app_id", unique = true, nullable = false)
+    @Column(name = "app_id", unique = false, nullable = false)
     private long appid;
 
-    @Column(name = "game_name", unique = true, nullable = false)
+    @Column(name = "game_name", unique = false, nullable = false)
     private String name;
     
     @Column(name = "previous_time_played",  nullable = true)
@@ -30,13 +31,31 @@ public class Game {
     @Column(name = "playtime_weeks",  nullable = true)
     private int playtime_weeks;
 
-    public Game(String name, int previousTime, int playtime_forever){
-        this.name = name;
-        this.previousTime = previousTime;
-        this.playtime_forever = playtime_forever;
-    }
+    @Column(name = "owner_id",unique = false, nullable = false)
+    private String ownerID;
 
-    public Game(){
+    @Transient
+    private int minutes_played_yesterday;
+    @Transient
+    private int minutes_played_today;
+
+    public String getOwnerID() {
+        return ownerID;
+    }
+    public void setOwnerID(String ownerID) {
+        this.ownerID = ownerID;
+    }
+    public void setMinutes_played_today(int minutes_played_today) {
+        this.minutes_played_today = minutes_played_today;
+    }
+    public void setMinutes_played_yesterday(int minutes_played_yesterday) {
+        this.minutes_played_yesterday = minutes_played_yesterday;
+    }
+    public int getMinutes_played_today() {
+        return minutes_played_today;
+    }
+    public int getMinutes_played_yesterday() {
+        return minutes_played_yesterday;
     }
 
     public void setName(String name) {
@@ -74,6 +93,14 @@ public class Game {
     }
     @Override
     public String toString() {
-        return "[ Name: " +name + "; App ID: "+ appid + "; Playtime total: "+ playtime_forever + "; Playtime 2 weeks: "+ playtime_weeks + " ]";
+        return "[ Name: " +name + "; App ID: "+ appid + "; Owner ID: " + ownerID + "; Playtime total: "+ playtime_forever + "; Playtime 2 weeks: "+ playtime_weeks + "; Playtime today: " + minutes_played_today+" ]";
+    }
+    @Override
+    public boolean equals(Object obj) {
+        return String.valueOf(appid).equals(String.valueOf(obj));
+    }
+    @Override
+    public int hashCode() {
+        return name.hashCode();
     }
 }
