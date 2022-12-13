@@ -47,14 +47,6 @@ public class GameParser {
         } catch (IOException e) {
             System.out.println("Error occurred: "+e.getMessage());
         }
-        // for (Game game : gameRepository.findAll()) {
-        //     try {
-        //         mapper.writeValueAsString(game);
-        //     } catch (JsonProcessingException e) {
-        //         System.out.println("Error occurred: "+e.getMessage());
-        //     }
-        // }
-        //System.out.println(link);
         return "";
     }
 
@@ -73,7 +65,6 @@ public class GameParser {
               sb.append(line);
             }
             rd.close();
-            //System.out.println(sb.toString());
             JSONObject jsonResponse = new JSONObject(sb.toString());
             JSONObject jsonObject = jsonResponse.getJSONObject("response");
             JSONArray jsonArray = jsonObject.getJSONArray("games");
@@ -96,6 +87,7 @@ public class GameParser {
                     existingGame.setMinutes_played_today(existingGame.getPlaytime_forever() - existingGame.getPreviousTime());
                     gameRepository.save(existingGame);
                 }else {
+                    game.setMinutes_played_today(game.getPlaytime_forever()-game.getPlaytime_weeks());
                     gameRepository.save(game);
                 }
                     System.out.println(game.toString());
