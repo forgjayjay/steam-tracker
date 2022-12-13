@@ -96,8 +96,8 @@ public class Game {
         return "[ Name: " +name + "; App ID: "+ appid + "; Owner ID: " + ownerID + "; Playtime total: "+ playtime_forever + "; Playtime 2 weeks: "+ playtime_weeks + "; Playtime today: " + minutes_played_today+" ]";
     }
     @Override
-    public boolean equals(Object arg0) {
-        return name.equals(arg0);
+    public boolean equals(Object obj) {
+        return String.valueOf(appid).equals(String.valueOf(obj));
     }
     @Override
     public int hashCode() {

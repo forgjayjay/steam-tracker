@@ -22,11 +22,13 @@ public class GameParser {
 
     private String link;
 
+    private List<String> updatedUsers = new ArrayList<>();
+
     @Autowired
     GameRepository gameRepository;
 
     public String parse(String userID, String key){
-        /*if(!updated)*/ update(userID, key);
+        if(!updatedUsers.contains(userID)) update(userID, key);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectMapper mapper = new ObjectMapper();
         byte[] data;
@@ -58,6 +60,7 @@ public class GameParser {
 
     public void update(String userID, String key){
         System.out.println("Updating database . . .");
+        updatedUsers.add(userID);
         link = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?count=10&key="+key+"&steamid="+userID;
         try {
             URL url = new URL(link);
