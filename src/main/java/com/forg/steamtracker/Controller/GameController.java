@@ -26,10 +26,13 @@ public class GameController {
     public String mainPage(){
         return "index";
     }
-
     @GetMapping("/my-games")
+    public String displayMyGamesChart(@RequestParam String userID){
+        return "my_games";
+    }
+    @GetMapping("/my-games-json")
     @ResponseBody
-    public String displayMyGames(@RequestParam String userID){
+    public String displayMyGamesJSON(@RequestParam String userID){
         return gameParser.parse(userID, key);
     }
 }

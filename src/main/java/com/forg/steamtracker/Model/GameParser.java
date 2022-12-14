@@ -24,8 +24,21 @@ public class GameParser {
 
     private List<String> updatedUsers = new ArrayList<>();
 
+    //private static GameParser instance;
+
     @Autowired
     GameRepository gameRepository;
+
+    public GameParser (){
+        
+    }
+
+    // public static GameParser getInstance(){
+    //     if(instance==null){
+    //         instance = new GameParser();
+    //     }
+    //     return instance;
+    // }
 
     public String parse(String userID, String key){
         if(!updatedUsers.contains(userID)) update(userID, key);
@@ -43,18 +56,12 @@ public class GameParser {
             }
             mapper.writeValue(out, gamesToReturn);
             data = out.toByteArray();
-            return new String(data);
+            // json.put("games", new String(data));
+            // return json.toString();
+            return new String("{ \"games\" : "+ new String(data) + " }");
         } catch (IOException e) {
             System.out.println("Error occurred: "+e.getMessage());
         }
-        // for (Game game : gameRepository.findAll()) {
-        //     try {
-        //         mapper.writeValueAsString(game);
-        //     } catch (JsonProcessingException e) {
-        //         System.out.println("Error occurred: "+e.getMessage());
-        //     }
-        // }
-        //System.out.println(link);
         return "";
     }
 
@@ -73,7 +80,6 @@ public class GameParser {
               sb.append(line);
             }
             rd.close();
-            //System.out.println(sb.toString());
             JSONObject jsonResponse = new JSONObject(sb.toString());
             JSONObject jsonObject = jsonResponse.getJSONObject("response");
             JSONArray jsonArray = jsonObject.getJSONArray("games");
@@ -85,17 +91,18 @@ public class GameParser {
                 game.setAppid(jsonObject.getLong("appid"));
                 game.setPlaytime_forever(jsonObject.getInt("playtime_forever"));
                 game.setPlaytime_weeks(jsonObject.getInt("playtime_2weeks"));
-                game.setPreviousTime(game.getPlaytime_forever());
+                game.setPrevious_time(game.getPlaytime_forever());
                 game.setOwnerID(userID);
-                Game existingGame = gameRepository.findByName(game.getName());
+                Game existingGame = gameRepository.findByNameAndOwnerID(game.getName(), game.getOwnerID());
                 if(existingGame!=null){
-                    existingGame.setMinutes_played_yesterday(existingGame.getPlaytime_forever() - existingGame.getPreviousTime());
-                    existingGame.setPreviousTime(existingGame.getPlaytime_forever());
+                    existingGame.setMinutes_played_yesterday(existingGame.getPlaytime_forever() - existingGame.getPrevious_time());
+                    existingGame.setPrevious_time(existingGame.getPlaytime_forever());
                     existingGame.setPlaytime_forever(game.getPlaytime_forever());
                     existingGame.setOwnerID(userID);
-                    existingGame.setMinutes_played_today(existingGame.getPlaytime_forever() - existingGame.getPreviousTime());
+                    existingGame.setMinutes_played_today(existingGame.getPlaytime_forever() - existingGame.getPrevious_time());
                     gameRepository.save(existingGame);
                 }else {
+                    game.setMinutes_played_today(game.getPlaytime_forever()-game.getPlaytime_weeks());
                     gameRepository.save(game);
                 }
                     System.out.println(game.toString());

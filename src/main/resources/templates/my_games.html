@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="ISO-8859-1">
+        <title>Welcome to Target Practice game</title>
+        <link th:href="@{css/charts.min.css}" rel="stylesheet">
+        <style>
+            body {
+                background-color: #121212;
+                height: 100vh;
+                margin: 0;
+                align-items: center;
+                justify-content: center;
+                display: flex;
+            }
+            #chart-1{
+                height: 200;
+                max-width: 300;
+                margin: 0 auto;
+            }
+        </style>
+    </head>
+    <body>
+        <table id="chart-1" class="charts-css column show-labels">
+            <caption>Test table 1</caption>
+            <tbody>
+
+            </tbody>
+        </table>
+        <button onclick="showChart()">button</button>
+    </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" th:src="@{/js/scripts.js}"></script>
+</html>

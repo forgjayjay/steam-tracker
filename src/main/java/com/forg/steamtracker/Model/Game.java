@@ -23,7 +23,7 @@ public class Game {
     private String name;
     
     @Column(name = "previous_time_played",  nullable = true)
-    private int previousTime;
+    private int previous_time;
     
     @Column(name = "playtime_forever",  nullable = true)
     private int playtime_forever;
@@ -64,11 +64,11 @@ public class Game {
     public String getName() {
         return name;
     }
-    public void setPreviousTime(int previousTime) {
-        this.previousTime = previousTime;
+    public void setPrevious_time(int previous_time) {
+        this.previous_time = previous_time;
     }
-    public int getPreviousTime() {
-        return previousTime;
+    public int getPrevious_time() {
+        return previous_time;
     }
     public void setPlaytime_forever(int playtime_forever) {
         this.playtime_forever = playtime_forever;
