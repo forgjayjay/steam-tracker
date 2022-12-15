@@ -58,7 +58,7 @@ public class GameParser {
             data = out.toByteArray();
             // json.put("games", new String(data));
             // return json.toString();
-            return new String("{ \"games\" : "+ new String(data) + " }");
+            return new String("{\"games\":"+ new String(data) + "}");
         } catch (IOException e) {
             System.out.println("Error occurred: "+e.getMessage());
         }
