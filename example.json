@@ -1,0 +1,81 @@
+{
+    "games": [
+      {
+        "id": 52,
+        "appid": 1252330,
+        "name": "DEATHLOOP",
+        "previous_time": 1240,
+        "playtime_forever": 1240,
+        "playtime_weeks": 1240,
+        "ownerID": "",
+        "minutes_played_yesterday": 0,
+        "minutes_played_today": 0
+      },
+      {
+        "id": 53,
+        "appid": 620,
+        "name": "Portal 2",
+        "previous_time": 1018,
+        "playtime_forever": 1018,
+        "playtime_weeks": 294,
+        "ownerID": "",
+        "minutes_played_yesterday": 0,
+        "minutes_played_today": 0
+      },
+      {
+        "id": 54,
+        "appid": 1245620,
+        "name": "ELDEN RING",
+        "previous_time": 13228,
+        "playtime_forever": 13228,
+        "playtime_weeks": 250,
+        "ownerID": "",
+        "minutes_played_yesterday": 0,
+        "minutes_played_today": 0
+      },
+      {
+        "id": 55,
+        "appid": 1281930,
+        "name": "tModLoader",
+        "previous_time": 19176,
+        "playtime_forever": 19176,
+        "playtime_weeks": 157,
+        "ownerID": "",
+        "minutes_played_yesterday": 0,
+        "minutes_played_today": 0
+      },
+      {
+        "id": 56,
+        "appid": 105600,
+        "name": "Terraria",
+        "previous_time": 29188,
+        "playtime_forever": 29188,
+        "playtime_weeks": 156,
+        "ownerID": "",
+        "minutes_played_yesterday": 0,
+        "minutes_played_today": 0
+      },
+      {
+        "id": 57,
+        "appid": 730,
+        "name": "Counter-Strike: Global Offensive",
+        "previous_time": 25382,
+        "playtime_forever": 25382,
+        "playtime_weeks": 115,
+        "ownerID": "",
+        "minutes_played_yesterday": 0,
+        "minutes_played_today": 0
+      },
+      {
+        "id": 102,
+        "appid": 646570,
+        "name": "Slay the Spire",
+        "previous_time": 5697,
+        "playtime_forever": 5697,
+        "playtime_weeks": 71,
+        "ownerID": "",
+        "minutes_played_yesterday": 0,
+        "minutes_played_today": 0
+      }
+    ]
+  }
