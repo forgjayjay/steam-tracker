@@ -51,7 +51,9 @@ public class GameParser {
 
             for (Game game : games) {
                 if(game.getOwnerID().equals(userID)) {
+                    game.setMinutes_played_today(game.getPlaytime_forever()-game.getPrevious_time());
                     gamesToReturn.add(game);
+                    System.out.println(game.toString());
                 }
             }
             mapper.writeValue(out, gamesToReturn);
@@ -105,7 +107,6 @@ public class GameParser {
                     game.setMinutes_played_today(game.getPlaytime_forever()-game.getPlaytime_weeks());
                     gameRepository.save(game);
                 }
-                    System.out.println(game.toString());
                 // System.out.println(jsonObject.toString());
             }
         } catch (Exception e) {

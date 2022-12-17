@@ -1,33 +1,44 @@
 <!DOCTYPE html>
     <head>
         <meta charset="ISO-8859-1">
-        <title>Welcome to Target Practice game</title>
+        <title>whatdidiplaytoday?</title>
         <link th:href="@{css/charts.min.css}" rel="stylesheet">
         <style>
             body {
-                background-color: #121212;
-                height: 95vh;
+                background-color: rgba(54,57,62);
+                height: 90vh;
                 margin: 0;
                 align-items:center;
                 justify-content: center;
                 display: flex;
-                color: whitesmoke;
+                color: rgb(182, 245, 224);
+                bottom: 10%;
             }
             #chart-1{
                 height: 200;
                 max-width: 300;
                 margin: 0 auto;
             }
+            #chart-1 tr {
+            transition-duration: 0.3s;
+            }
+            #chart-1 tr:hover {
+                background-color: rgba(135, 193, 216, 0.2);
+            }
+            #chart-1 tr:hover th {
+                background-color: rgba(43, 67, 77, 0.2);
+                /* color: rgb(240, 231, 231); */
+            }
+
         </style>
     </head>
     <body>
-        <table id="chart-1" class="charts-css column show-labels">
-            <caption>Test table 1</caption>
+        <table id="chart-1" class="charts-css column show-labels show-primary-axis show-5-secondary-axes data-spacing-1 show-data-on-hover">
+            <caption>Games chart</caption>
             <tbody>
 
             </tbody>
         </table>
-        <!-- <button onclick="showChart()">button</button> -->
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script type="text/javascript" th:src="@{/js/scripts.js}"></script>

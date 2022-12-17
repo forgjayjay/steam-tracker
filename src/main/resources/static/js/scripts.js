@@ -6,7 +6,9 @@ var jsonData;
 
 var params;
 var link;
-
+var th;
+var td;
+var data;
 function prepareLink(){
     params = new URLSearchParams(document.location.search);
     link = 'my-games-json?userID=' + params.get('userID');
@@ -22,12 +24,26 @@ function showChart(){
             jsonData = JSON.parse(data)
             for (var i = 0; i < jsonData.games.length; i++) {
                 game = jsonData.games[i];
+                
                 newRow = tbodyRef.insertRow();
                 newCell = newRow.insertCell();
                 newCell.style = '--size: ' + (game.minutes_played_today/1440);
+
                 th = document.createElement('th');
                 th.innerHTML = game.name;
+
+                td = document.createElement('td');
+                data = document.createElement('span');
+                data.className = 'data';
+                data.innerHTML = game.minutes_played_today;
+                td.style = 'background-color:transparent';
+                td.appendChild(data);
+                
                 newCell.appendChild(th);
+
+                if (game.minutes_played_today > 0) {
+                    newCell.appendChild(td);
+                }
             }
         },
         error: function(data) {
