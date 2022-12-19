@@ -50,10 +50,9 @@ public class GameParser {
             List<Game> gamesToReturn = new ArrayList<>();
 
             for (Game game : games) {
-                if(game.getOwnerID().equals(userID)) {
-                    game.setMinutes_played_today(game.getPlaytime_forever()-game.getPrevious_time());
+                game.setMinutes_played_today(game.getPlaytime_forever()-game.getPrevious_time());
+                if(game.getOwnerID().equals(userID) && game.getMinutes_played_today()>0) {
                     gamesToReturn.add(game);
-                    System.out.println(game.toString());
                 }
             }
             mapper.writeValue(out, gamesToReturn);
@@ -97,7 +96,7 @@ public class GameParser {
                 game.setOwnerID(userID);
                 Game existingGame = gameRepository.findByNameAndOwnerID(game.getName(), game.getOwnerID());
                 if(existingGame!=null){
-                    existingGame.setMinutes_played_yesterday(existingGame.getPlaytime_forever() - existingGame.getPrevious_time());
+                    //existingGame.setMinutes_played_yesterday(existingGame.getPlaytime_forever() - existingGame.getPrevious_time());
                     existingGame.setPrevious_time(existingGame.getPlaytime_forever());
                     existingGame.setPlaytime_forever(game.getPlaytime_forever());
                     existingGame.setOwnerID(userID);
