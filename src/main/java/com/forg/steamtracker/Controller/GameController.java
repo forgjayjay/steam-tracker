@@ -1,7 +1,6 @@
 package com.forg.steamtracker.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,11 +18,8 @@ public class GameController {
     @Autowired
     GameParser gameParser;
     
-    @Value("${steam.key}")
-    private String key;
-    
     @GetMapping("")
-    public String mainPage(){
+    public String mainPage(){   
         return "index";
     }
     @GetMapping("/my-games")
@@ -33,6 +29,6 @@ public class GameController {
     @GetMapping("/my-games-json")
     @ResponseBody
     public String displayMyGamesJSON(@RequestParam String userID){
-        return gameParser.parse(userID, key);
+        return gameParser.parse(userID);
     }
 }

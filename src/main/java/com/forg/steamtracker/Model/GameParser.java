@@ -13,75 +13,98 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import jakarta.annotation.PostConstruct;
 
 @Service
 @Configurable
 public class GameParser {
-
+    private String steamJSON;
+    private ArrayList<Game> gameArray = new ArrayList<>();
     private String link;
-
-    private List<String> updatedUsers = new ArrayList<>();
-
-    //private static GameParser instance;
+    @Value("${steam.key}")
+    public String key;
 
     @Autowired
     GameRepository gameRepository;
-
+  
     public GameParser (){
         
     }
-
-    // public static GameParser getInstance(){
-    //     if(instance==null){
-    //         instance = new GameParser();
-    //     }
-    //     return instance;
-    // }
-
-    public String parse(String userID, String key){
-        if(!updatedUsers.contains(userID)) update(userID, key);
+    public String parse(String userID){
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectMapper mapper = new ObjectMapper();
         byte[] data;
+        gameArray.clear();
+        checkGames(userID);
         try {
-            List<Game> games = gameRepository.findAll();
-            List<Game> gamesToReturn = new ArrayList<>();
-
-            for (Game game : games) {
-                game.setMinutes_played_today(game.getPlaytime_forever()-game.getPrevious_time());
-                if(game.getOwnerID().equals(userID) && game.getMinutes_played_today()>0) {
-                    gamesToReturn.add(game);
-                }
-            }
-            mapper.writeValue(out, gamesToReturn);
+            
+            mapper.writeValue(out, gameArray);
             data = out.toByteArray();
-            // json.put("games", new String(data));
-            // return json.toString();
             return new String("{\"games\":"+ new String(data) + "}");
         } catch (IOException e) {
             System.out.println("Error occurred: "+e.getMessage());
         }
         return "";
     }
-
-    public void update(String userID, String key){
-        System.out.println("Updating database . . .");
-        updatedUsers.add(userID);
-        link = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?count=10&key="+key+"&steamid="+userID;
+   
+    public void checkGames(String userID){
+        checkAPI(userID);
+        JSONObject jsonResponse = new JSONObject(steamJSON.toString());
+        JSONObject jsonObject = jsonResponse.getJSONObject("response");
+        JSONArray jsonArray = jsonObject.getJSONArray("games");
+        Game savedGame;
+        Game jsonGame;
+        Game returnGame;
+        ArrayList<Game> tempGameArray = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            jsonGame = new Game();
+            jsonObject = jsonArray.getJSONObject(i);
+            jsonGame.setName(jsonObject.getString("name"));
+            jsonGame.setPlaytime_forever(jsonObject.getInt("playtime_forever"));
+            jsonGame.setAppid(jsonObject.getLong("appid"));
+            jsonGame.setOwnerID(userID);
+            tempGameArray.add(jsonGame);
+        }
+        for (Game game : tempGameArray) {
+            savedGame = gameRepository.findByNameAndOwnerID(game.getName(), game.getOwnerID());
+            if(savedGame==null) savedGame = gameRepository.save(game);
+            returnGame  = new Game();
+            returnGame.setName(game.getName());
+            returnGame.setMinutes_played_today(game.getPlaytime_forever() - savedGame.getPlaytime_forever());
+            if(returnGame.getMinutes_played_today()>0) gameArray.add(returnGame);
+        }
+    }
+    public String checkAPI(String userID){
+        link = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?count=10&key="+key+"&steamid=";
+        link+=userID;
+        steamJSON="";
+        StringBuilder sb = new StringBuilder();
         try {
             URL url = new URL(link);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
             String line;
             while ((line = rd.readLine()) != null) {
               sb.append(line);
             }
             rd.close();
-            JSONObject jsonResponse = new JSONObject(sb.toString());
+            steamJSON = sb.toString();
+        } catch (Exception e) {
+            System.out.println("Error occurred: "+e.getMessage());
+       }
+       return steamJSON;
+    }
+    @PostConstruct
+    public void updateGames(){
+        List<String> userArray = gameRepository.findAllUsers();
+        for (String userID : userArray) {
+            checkAPI(userID);
+            JSONObject jsonResponse = new JSONObject(steamJSON.toString());
             JSONObject jsonObject = jsonResponse.getJSONObject("response");
             JSONArray jsonArray = jsonObject.getJSONArray("games");
             Game game;
@@ -96,20 +119,16 @@ public class GameParser {
                 game.setOwnerID(userID);
                 Game existingGame = gameRepository.findByNameAndOwnerID(game.getName(), game.getOwnerID());
                 if(existingGame!=null){
-                    //existingGame.setMinutes_played_yesterday(existingGame.getPlaytime_forever() - existingGame.getPrevious_time());
                     existingGame.setPrevious_time(existingGame.getPlaytime_forever());
                     existingGame.setPlaytime_forever(game.getPlaytime_forever());
                     existingGame.setOwnerID(userID);
                     existingGame.setMinutes_played_today(existingGame.getPlaytime_forever() - existingGame.getPrevious_time());
-                    gameRepository.save(existingGame);
+                    game = existingGame;
                 }else {
                     game.setMinutes_played_today(game.getPlaytime_forever()-game.getPlaytime_weeks());
-                    gameRepository.save(game);
                 }
-                // System.out.println(jsonObject.toString());
-            }
-        } catch (Exception e) {
-            System.out.println("Error occurred: "+e.getMessage());
+                gameRepository.save(game);
+            }   
         }
     }
 }
