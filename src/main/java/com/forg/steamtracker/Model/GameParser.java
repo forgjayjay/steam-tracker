@@ -65,16 +65,22 @@ public class GameParser {
             jsonObject = jsonArray.getJSONObject(i);
             jsonGame.setName(jsonObject.getString("name"));
             jsonGame.setPlaytime_forever(jsonObject.getInt("playtime_forever"));
+            jsonGame.setPlaytime_weeks(jsonObject.getInt("playtime_2weeks"));
             jsonGame.setAppid(jsonObject.getLong("appid"));
             jsonGame.setOwnerID(userID);
             tempGameArray.add(jsonGame);
         }
         for (Game game : tempGameArray) {
             savedGame = gameRepository.findByNameAndOwnerID(game.getName(), game.getOwnerID());
-            if(savedGame==null) savedGame = gameRepository.save(game);
             returnGame  = new Game();
             returnGame.setName(game.getName());
-            returnGame.setMinutes_played_today(game.getPlaytime_forever() - savedGame.getPlaytime_forever());
+            if(savedGame==null) {
+                savedGame = gameRepository.save(game);
+                returnGame.setMinutes_played_today(game.getPlaytime_weeks());
+            } else{
+                returnGame.setMinutes_played_today(game.getPlaytime_forever() - savedGame.getPlaytime_forever());
+            }
+            
             if(returnGame.getMinutes_played_today()>0) gameArray.add(returnGame);
         }
     }
