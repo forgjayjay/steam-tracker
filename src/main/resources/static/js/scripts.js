@@ -1,14 +1,13 @@
 window.addEventListener('load', showChart());
-var game;
-var newRow;
-var newCell;
-var jsonData;
-
-var params;
-var link;
-var th;
-var td;
-var data;
+let game;
+let newRow;
+let newCell;
+let jsonData;
+let params;
+let link;
+let th;
+let td;
+let data;
 function prepareLink(){
     params = new URLSearchParams(document.location.search);
     link = 'my-games-json?userID=' + params.get('userID');
@@ -20,9 +19,8 @@ function showChart(){
     $.ajax(link, {
         type: "GET",
         success: function(data) {
-            console.log("success: ", data);
             jsonData = JSON.parse(data)
-            for (var i = 0; i < jsonData.games.length; i++) {
+            for (let i = 0; i < jsonData.games.length; i++) {
                 game = jsonData.games[i];
                 
                 newRow = tbodyRef.insertRow();
@@ -46,12 +44,9 @@ function showChart(){
                 }
             }
         },
-        error: function(data) {
-            console.log("error: ", data);
-            console.log(link);
+        error: function() {
         },
-        done: function(e) {
-            console.log("done");
+        done: function() {
         }
     });
     
