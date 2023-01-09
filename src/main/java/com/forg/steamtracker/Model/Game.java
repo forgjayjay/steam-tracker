@@ -36,7 +36,7 @@ public class Game {
 
     @Transient
     private int minutes_played_yesterday;
-    @Transient
+    @Column(name = "minutes_played_today",unique = false, nullable = true)
     private int minutes_played_today;
 
     public String getOwnerID() {

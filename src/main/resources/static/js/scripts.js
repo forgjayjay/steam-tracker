@@ -1,13 +1,13 @@
 window.addEventListener('load', showChart());
-let game;
-let newRow;
-let newCell;
-let jsonData;
-let params;
-let link;
-let th;
-let td;
-let data;
+var game;
+var newRow;
+var newCell;
+var jsonData;
+var params = new URLSearchParams(document.location.search);
+var link;
+var th;
+var td;
+var data;
 function prepareLink(){
     params = new URLSearchParams(document.location.search);
     link = 'my-games-json?userID=' + params.get('userID');
@@ -20,7 +20,8 @@ function showChart(){
         type: "GET",
         success: function(data) {
             jsonData = JSON.parse(data)
-            for (let i = 0; i < jsonData.games.length; i++) {
+            console.log(jsonData);
+            for (var i = 0; i < jsonData.games.length; i++) {
                 game = jsonData.games[i];
                 
                 newRow = tbodyRef.insertRow();

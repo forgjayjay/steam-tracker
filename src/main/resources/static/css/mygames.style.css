@@ -10,7 +10,6 @@ body {
 }
 #chart-1{
     height: 200;
-    max-width: 10vh;
     margin: 0 auto;
 }
 #chart-1 tr {
