@@ -24,9 +24,7 @@ import jakarta.annotation.PostConstruct;
 @Service
 @Configurable
 public class GameParser {
-    //@Value("${steam.key}")
-    public String key = "E263C1AAD903AFDD9DA35B8DEA8C1638";
-    private String steamJSON;
+    @Value("${steam.key}") public String key;
     private ArrayList<Game> gameArray = new ArrayList<>();
     private String link = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?count=10&key="+key+"&steamid=";
     private Logger logger = LoggerFactory.getLogger(GameParser.class);
@@ -46,8 +44,8 @@ public class GameParser {
         gameArray.clear();
         checkGames(userID);
         try {
-            
             mapper.writeValue(out, gameArray);
+            logger.info("Return array: " + gameArray);
             data = out.toByteArray();
             return new String("{\"games\":"+ new String(data) + "}");
         } catch (IOException e) {
@@ -58,8 +56,8 @@ public class GameParser {
    
     public void checkGames(String userID){
         logger.info("Checking games with provided user ID:" + userID);
-        checkAPI(userID);
-        JSONObject jsonResponse = new JSONObject(steamJSON.toString());
+        String apiresponse = checkAPI(userID);
+        JSONObject jsonResponse = new JSONObject(apiresponse.toString());
         JSONObject jsonObject = jsonResponse.getJSONObject("response");
         JSONArray jsonArray = jsonObject.getJSONArray("games");
         Game savedGame;
@@ -74,6 +72,7 @@ public class GameParser {
             jsonGame.setPlaytime_weeks(jsonObject.getInt("playtime_2weeks"));
             jsonGame.setAppid(jsonObject.getLong("appid"));
             jsonGame.setOwnerID(userID);
+            logger.info("Preparing game for display: " + jsonGame.toString());
             tempGameArray.add(jsonGame);
         }
         for (Game game : tempGameArray) {
@@ -83,6 +82,8 @@ public class GameParser {
             if(savedGame==null) {
                 savedGame = gameRepository.save(game);
                 returnGame.setMinutes_played_today(game.getPlaytime_weeks());
+            } else {
+                returnGame.setMinutes_played_today(game.getPlaytime_forever()-savedGame.getPlaytime_forever());
             }
             if(returnGame.getMinutes_played_today()>0) gameArray.add(returnGame);
         }
@@ -90,7 +91,7 @@ public class GameParser {
     public String checkAPI(String userID){
         link = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?count=10&key="+key+"&steamid="+userID;
         logger.info("Checking API with provided link:" + link);
-        steamJSON="";
+        String steamJSON="";
         StringBuilder sb = new StringBuilder();
         try {
             URL url = new URL(link);
@@ -117,8 +118,8 @@ public class GameParser {
             return;
         }
         for (String userID : userArray) {
-            checkAPI(userID);
-            JSONObject jsonResponse = new JSONObject(steamJSON.toString());
+            String apiresponse = checkAPI(userID);
+            JSONObject jsonResponse = new JSONObject(apiresponse.toString());
             JSONObject jsonObject = jsonResponse.getJSONObject("response");
             JSONArray jsonArray = jsonObject.getJSONArray("games");
             Game game;
