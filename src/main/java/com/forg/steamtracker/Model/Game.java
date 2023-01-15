@@ -6,7 +6,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
 
 @Entity
 @Table(name = "game")
@@ -34,8 +33,6 @@ public class Game {
     @Column(name = "owner_id",unique = false, nullable = false)
     private String ownerID;
 
-    @Transient
-    private int minutes_played_yesterday;
     @Column(name = "minutes_played_today",unique = false, nullable = true)
     private int minutes_played_today;
 
@@ -48,16 +45,9 @@ public class Game {
     public void setMinutes_played_today(int minutes_played_today) {
         this.minutes_played_today = minutes_played_today;
     }
-    public void setMinutes_played_yesterday(int minutes_played_yesterday) {
-        this.minutes_played_yesterday = minutes_played_yesterday;
-    }
     public int getMinutes_played_today() {
         return minutes_played_today;
     }
-    public int getMinutes_played_yesterday() {
-        return minutes_played_yesterday;
-    }
-
     public void setName(String name) {
         this.name = name;
     }

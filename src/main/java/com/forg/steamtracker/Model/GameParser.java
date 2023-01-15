@@ -56,37 +56,61 @@ public class GameParser {
    
     public void checkGames(String userID){
         logger.info("Checking games with provided user ID:" + userID);
+        Game savedGame;
+        for (Game game :parseApiForUserId(userID)) {
+            savedGame = gameRepository.findByNameAndOwnerID(game.getName(), game.getOwnerID());
+            if(savedGame==null) {
+                savedGame = gameRepository.save(game);
+                game.setMinutes_played_today(game.getPlaytime_weeks());
+            } else {
+                game.setMinutes_played_today(game.getPlaytime_forever()-savedGame.getPlaytime_forever());
+            }
+            if(game.getMinutes_played_today()>0) gameArray.add(game);
+        }
+    }
+    
+    @PostConstruct
+    public void updateGamesOnLoad(){
+        logger.info("Updating database with link " + link);
+        List<String> userArray = gameRepository.findAllUsers();
+        if(userArray==null || userArray.size()<1) {
+            logger.error("No users were found in the database");
+            return;
+        }
+        Game existingGame;
+        for (String userID : userArray) {
+            for (Game game : parseApiForUserId(userID)) {
+                game.setPrevious_time(game.getPlaytime_forever());
+                existingGame = gameRepository.findByNameAndOwnerID(game.getName(), game.getOwnerID());
+                if(existingGame!=null){
+                    existingGame.setPrevious_time(existingGame.getPlaytime_forever());
+                    existingGame.setPlaytime_forever(game.getPlaytime_forever());
+                    gameRepository.save(existingGame);
+                }else {
+                    game.setMinutes_played_today(game.getPlaytime_forever()-game.getPlaytime_weeks());
+                    gameRepository.save(game);
+                }
+            }   
+        }
+    }
+    public List<Game> parseApiForUserId(String userID){
+        List<Game> returnList = new ArrayList<>();
         String apiresponse = checkAPI(userID);
         JSONObject jsonResponse = new JSONObject(apiresponse.toString());
         JSONObject jsonObject = jsonResponse.getJSONObject("response");
         JSONArray jsonArray = jsonObject.getJSONArray("games");
-        Game savedGame;
-        Game jsonGame;
-        Game returnGame;
-        ArrayList<Game> tempGameArray = new ArrayList<>();
+        Game game;
         for (int i = 0; i < jsonArray.length(); i++) {
-            jsonGame = new Game();
+            game = new Game();
             jsonObject = jsonArray.getJSONObject(i);
-            jsonGame.setName(jsonObject.getString("name"));
-            jsonGame.setPlaytime_forever(jsonObject.getInt("playtime_forever"));
-            jsonGame.setPlaytime_weeks(jsonObject.getInt("playtime_2weeks"));
-            jsonGame.setAppid(jsonObject.getLong("appid"));
-            jsonGame.setOwnerID(userID);
-            logger.info("Preparing game for display: " + jsonGame.toString());
-            tempGameArray.add(jsonGame);
+            game.setName(jsonObject.getString("name"));
+            game.setPlaytime_forever(jsonObject.getInt("playtime_forever"));
+            game.setPlaytime_weeks(jsonObject.getInt("playtime_2weeks"));
+            game.setAppid(jsonObject.getLong("appid"));
+            game.setOwnerID(userID);
+            returnList.add(game);
         }
-        for (Game game : tempGameArray) {
-            savedGame = gameRepository.findByNameAndOwnerID(game.getName(), game.getOwnerID());
-            returnGame  = new Game();
-            returnGame.setName(game.getName());
-            if(savedGame==null) {
-                savedGame = gameRepository.save(game);
-                returnGame.setMinutes_played_today(game.getPlaytime_weeks());
-            } else {
-                returnGame.setMinutes_played_today(game.getPlaytime_forever()-savedGame.getPlaytime_forever());
-            }
-            if(returnGame.getMinutes_played_today()>0) gameArray.add(returnGame);
-        }
+        return returnList;
     }
     public String checkAPI(String userID){
         link = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?count=10&key="+key+"&steamid="+userID;
@@ -108,42 +132,5 @@ public class GameParser {
             logger.error("Error occurred: "+e.getMessage());
        }
        return steamJSON;
-    }
-    @PostConstruct
-    public void updateGames(){
-        logger.info("Updating database with link " + link);
-        List<String> userArray = gameRepository.findAllUsers();
-        if(userArray==null || userArray.size()<1) {
-            logger.error("No users were found in the database");
-            return;
-        }
-        for (String userID : userArray) {
-            String apiresponse = checkAPI(userID);
-            JSONObject jsonResponse = new JSONObject(apiresponse.toString());
-            JSONObject jsonObject = jsonResponse.getJSONObject("response");
-            JSONArray jsonArray = jsonObject.getJSONArray("games");
-            Game game;
-            for (int i = 0; i < jsonArray.length(); i++) {
-                jsonObject = jsonArray.getJSONObject(i);
-                game = new Game();
-                game.setName(jsonObject.getString("name"));
-                game.setAppid(jsonObject.getLong("appid"));
-                game.setPlaytime_forever(jsonObject.getInt("playtime_forever"));
-                game.setPlaytime_weeks(jsonObject.getInt("playtime_2weeks"));
-                game.setPrevious_time(game.getPlaytime_forever());
-                game.setOwnerID(userID);
-                Game existingGame = gameRepository.findByNameAndOwnerID(game.getName(), game.getOwnerID());
-                if(existingGame!=null){
-                    existingGame.setPrevious_time(existingGame.getPlaytime_forever());
-                    existingGame.setPlaytime_forever(game.getPlaytime_forever());
-                    existingGame.setOwnerID(userID);
-                    existingGame.setMinutes_played_today(existingGame.getPlaytime_forever() - existingGame.getPrevious_time());
-                    game = existingGame;
-                }else {
-                    game.setMinutes_played_today(game.getPlaytime_forever()-game.getPlaytime_weeks());
-                }
-                gameRepository.save(game);
-            }   
-        }
     }
 }
