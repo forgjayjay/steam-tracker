@@ -83,7 +83,7 @@ public class GameParser {
                 if(!currentDate.equals(lastUpdateDate)){
                     lastUpdateDate = LocalDate.now();
                     updateGamesOnSchedule();
-                }
+                } else updateTimer();
             }
         }, 3600);
     }
