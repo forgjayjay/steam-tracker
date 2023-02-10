@@ -8,6 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,7 +33,8 @@ public class GameParser {
     private String link = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?count=10&key="+key+"&steamid=";
     private Logger logger = LoggerFactory.getLogger(GameParser.class);
     private LocalDate lastUpdateDate = LocalDate.now();
-    
+    private Timer timer = new Timer();
+    private Calendar previous = Calendar.getInstance();
 
     @Autowired
     GameRepository gameRepository;
@@ -75,23 +77,33 @@ public class GameParser {
     }
     
     public void updateTimer(){
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
+        Calendar next = Calendar.getInstance();
+        next.set(Calendar.HOUR_OF_DAY, next.get(Calendar.HOUR_OF_DAY) + 1);
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                LocalDate currentDate = LocalDate.now();
-                if(!currentDate.equals(lastUpdateDate)){
-                    lastUpdateDate = LocalDate.now();
+                Calendar current = Calendar.getInstance();
+                if (current.get(Calendar.DAY_OF_YEAR) != previous.get(Calendar.DAY_OF_YEAR)) {
+                    previous = current;
                     updateGamesOnSchedule();
-                } else updateTimer();
+                    timer.cancel();
+                    updateTimer();
+                }
             }
-        }, 3600);
+        }, next.getTime(), 60 * 60 * 1000);
     }
 
     @PostConstruct
+    public void startUpdate(){
+        updateGamesOnSchedule();
+        logger.info("Starting timer from " + lastUpdateDate.toString());
+        updateTimer();
+    }
+
+
     public void updateGamesOnSchedule(){
         logger.info("Updating database on schedule");
-        updateTimer();
         List<String> userArray = gameRepository.findAllUsers();
         List<Game> gamesList;
         if(userArray==null || userArray.size()<1) {
