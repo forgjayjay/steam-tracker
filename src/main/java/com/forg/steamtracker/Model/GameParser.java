@@ -29,28 +29,30 @@ import jakarta.annotation.PostConstruct;
 @Configurable
 public class GameParser {
     @Value("${steam.key}") public String key;
-    private ArrayList<Game> gameArray = new ArrayList<>();
+    private List<Game> gamesArray;
     private String link = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?count=10&key="+key+"&steamid=";
     private Logger logger = LoggerFactory.getLogger(GameParser.class);
     private LocalDate lastUpdateDate = LocalDate.now();
     private Timer timer = new Timer();
     private Calendar previous = Calendar.getInstance();
-
+    private boolean APItimeout = false;
+    private String globalUserID;
     @Autowired
     GameRepository gameRepository;
   
     public GameParser (){
         
     }
+
     public String parse(String userID){
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ObjectMapper mapper = new ObjectMapper();
         byte[] data;
-        gameArray.clear();
-        checkGames(userID);
+        globalUserID = userID;
+        gamesArray = cachedGames();
         try {
-            mapper.writeValue(out, gameArray);
-            logger.info("Return array: " + gameArray);
+            mapper.writeValue(out, gamesArray);
+            logger.info("Return array: " + gamesArray);
             data = out.toByteArray();
             return new String("{\"games\":"+ new String(data) + "}");
         } catch (IOException e) {
@@ -58,11 +60,22 @@ public class GameParser {
         }
         return "";
     }
-   
-    public void checkGames(String userID){
-        logger.info("Checking games with provided user ID:" + userID);
+    
+    public List<Game> cachedGames(){
+        List<Game> cachedGames = gamesArray;
+        if(APItimeout){
+            APItimeout = !APItimeout;
+            APItimer();
+            cachedGames = checkGames();
+        }
+        return cachedGames;
+    }
+
+    public List<Game> checkGames(){
+        List<Game> returnList = new ArrayList<>();
+        logger.info("Checking games with provided user ID:" + globalUserID);
         Game savedGame;
-        for (Game game : parseApiForUserId(userID)) {
+        for (Game game : parseAPIForUserId(globalUserID)) {
             savedGame = gameRepository.findByNameAndOwnerID(game.getName(), game.getOwnerID());
             if(savedGame==null) {
                 logger.info("Game not found: " + game.toString());
@@ -73,48 +86,29 @@ public class GameParser {
                 logger.info("Game found: " + savedGame.toString());
                 game.setMinutes_played_today(game.getPlaytime_forever()-savedGame.getPlaytime_forever());
             }
-            if(game.getMinutes_played_today()>0) gameArray.add(game);
+            if(game.getMinutes_played_today()>0) returnList.add(game);
         }
-    }
-    
-    public void updateTimer(){
-        Calendar next = Calendar.getInstance();
-        next.set(Calendar.HOUR_OF_DAY, next.get(Calendar.HOUR_OF_DAY) + 1); 
-        timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                Calendar current = Calendar.getInstance();
-                if (current.get(Calendar.DAY_OF_YEAR) != previous.get(Calendar.DAY_OF_YEAR)) {
-                    previous = current;
-                    updateGamesOnSchedule();
-                    timer.cancel();
-                    updateTimer();
-                }
-            }
-        }, next.getTime(), 60 * 60 * 1000);
+        return returnList;
     }
 
     @PostConstruct
     public void startUpdate(){
         updateGamesOnSchedule();
         logger.info("Starting timer from " + lastUpdateDate.toString());
-        updateTimer();
+        dailyUpdateTimer();
     }
-
-
+    
+    
     public void updateGamesOnSchedule(){
         logger.info("Updating database on schedule");
         List<String> userArray = gameRepository.findAllUsers();
-        List<Game> gamesList;
         if(userArray==null || userArray.size()<1) {
             logger.error("No users were found in the database");
             return;
         }
         Game existingGame;
-        for (String userID : userArray) {
-            gamesList = parseApiForUserId(userID);
-            for (Game game : gamesList) {
+        for (String localUserID : userArray) {
+            for (Game game : parseAPIForUserId(localUserID)) {
                 game.setPrevious_time(game.getPlaytime_forever());
                 existingGame = gameRepository.findByNameAndOwnerID(game.getName(), game.getOwnerID());
                 if(existingGame!=null){
@@ -132,10 +126,11 @@ public class GameParser {
             }   
         }
     }
-    public List<Game> parseApiForUserId(String userID){
+
+    public List<Game> parseAPIForUserId(String userID){
         List<Game> returnList = new ArrayList<>();
-        String apiresponse = checkAPI(userID);
-        JSONObject jsonResponse = new JSONObject(apiresponse.toString());
+        String APIresponse = checkAPI(userID);
+        JSONObject jsonResponse = new JSONObject(APIresponse.toString());
         JSONObject jsonObject = jsonResponse.getJSONObject("response");
         JSONArray jsonArray = jsonObject.getJSONArray("games");
         Game game;
@@ -172,5 +167,35 @@ public class GameParser {
             logger.error("Error occurred: "+e.getMessage());
        }
        return steamJSON;
+    }
+
+    private void dailyUpdateTimer(){
+        Calendar next = Calendar.getInstance();
+        next.set(Calendar.HOUR_OF_DAY, next.get(Calendar.HOUR_OF_DAY) + 1); 
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                Calendar current = Calendar.getInstance();
+                if (current.get(Calendar.DAY_OF_YEAR) != previous.get(Calendar.DAY_OF_YEAR)) {
+                    previous = current;
+                    updateGamesOnSchedule();
+                    timer.cancel();
+                    dailyUpdateTimer();
+                }
+            }
+        }, next.getTime(), 60 * 60 * 1000);
+    }
+
+
+    private void APItimer(){
+        Timer APItimer = new Timer();
+
+        APItimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                APItimeout = !APItimeout;   
+            }
+        }, 10 * 60 * 1000);
     }
 }
