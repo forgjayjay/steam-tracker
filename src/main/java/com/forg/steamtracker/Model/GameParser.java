@@ -62,12 +62,13 @@ public class GameParser {
     public void checkGames(String userID){
         logger.info("Checking games with provided user ID:" + userID);
         Game savedGame;
-        for (Game game :parseApiForUserId(userID)) {
+        for (Game game : parseApiForUserId(userID)) {
             savedGame = gameRepository.findByNameAndOwnerID(game.getName(), game.getOwnerID());
             if(savedGame==null) {
-                savedGame = gameRepository.save(game);
                 logger.info("Game not found: " + game.toString());
                 game.setMinutes_played_today(game.getPlaytime_weeks());
+                game.setPrevious_time(0);
+                gameRepository.save(game);
             } else {
                 logger.info("Game found: " + savedGame.toString());
                 game.setMinutes_played_today(game.getPlaytime_forever()-savedGame.getPlaytime_forever());
@@ -78,7 +79,7 @@ public class GameParser {
     
     public void updateTimer(){
         Calendar next = Calendar.getInstance();
-        next.set(Calendar.HOUR_OF_DAY, next.get(Calendar.HOUR_OF_DAY) + 1);
+        next.set(Calendar.HOUR_OF_DAY, next.get(Calendar.HOUR_OF_DAY) + 1); 
         timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -123,9 +124,9 @@ public class GameParser {
                     logger.info("Update games on load found existing game: " + existingGame.toString());
                     gameRepository.save(existingGame);
                 }else {
-                    game.setMinutes_played_today(game.getPlaytime_forever()-game.getPlaytime_weeks());
+                    game.setPrevious_time(game.getPlaytime_forever());
                     game.setMinutes_played_today(0);
-                    logger.info("Update games on load didn't found existing game, adding it to repository: " + game.toString());
+                    logger.info("Update games on load didn't find existing game, adding it to repository: " + game.toString());
                     gameRepository.save(game);
                 }
             }   
