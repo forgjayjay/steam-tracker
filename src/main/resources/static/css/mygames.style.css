@@ -1,23 +1,24 @@
 body {
     background-color: rgba(54,57,62);
+    height: 85vh;
     margin: 0 auto;
     align-items:center;
     justify-content: center;
     display: flex;
     color: rgb(182, 245, 224);
+    bottom: 5%
 }
 #chart-1{
-    max-width: 80vw;
-    max-height: 90vh;
+    height: 200;
     margin: 0 auto;
 }
 #chart-1 tr {
-transition-duration: 0.3s;
+    transition-duration: 0.3s;
+    max-width: 10vh;
 }
 #chart-1 tr:hover {
     background-color: rgba(135, 193, 216, 0.2);
 }
 #chart-1 tr:hover th {
     background-color: rgba(43, 67, 77, 0.2);
-    /* color: rgb(240, 231, 231); */
 }

@@ -63,7 +63,7 @@ public class GameParser {
     
     public List<Game> cachedGames(){
         List<Game> cachedGames = gamesArray;
-        if(APItimeout){
+        if(!APItimeout){
             APItimeout = !APItimeout;
             APItimer();
             cachedGames = checkGames();
