@@ -1,7 +1,7 @@
 body {
     background-color: rgba(54,57,62);
     height: 85vh;
-    margin: 0 auto;
+    margin: 1rem;
     align-items:center;
     justify-content: center;
     display: flex;
@@ -14,7 +14,7 @@ body {
 }
 #chart-1 tr {
     transition-duration: 0.3s;
-    max-width: 10vh;
+    max-width: 7rem;
 }
 #chart-1 tr:hover {
     background-color: rgba(135, 193, 216, 0.2);

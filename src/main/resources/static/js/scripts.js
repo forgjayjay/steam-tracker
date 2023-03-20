@@ -44,6 +44,7 @@ function showChart(){
                     newCell.appendChild(td);
                 }
             }
+            document.getElementById('chart-1').style = 'max-width: ' + jsonData.games.length*10 + 'vw';
         },
         error: function() {
         },
