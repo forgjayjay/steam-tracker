@@ -84,7 +84,7 @@ public class GameParser {
                 gameRepository.save(game);
             } else {
                 logger.info("Game found: " + savedGame.toString());
-                game.setMinutes_played_today(game.getPlaytime_forever()-savedGame.getPlaytime_forever());
+                game.setMinutes_played_today(Math.max(game.getPlaytime_forever()-savedGame.getPlaytime_forever(), savedGame.getMinutes_played_today()));
             }
             if(game.getMinutes_played_today()>0) returnList.add(game);
         }

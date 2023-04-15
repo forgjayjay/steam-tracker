@@ -1,4 +1,3 @@
 FROM openjdk:17-oracle
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
-ENTRYPOINT ["java","-jar","/app.jar"]
+COPY ./target/steam-tracker.jar steam-tracker.jar
+ENTRYPOINT ["java","-jar","/steam-tracker.jar"]
