@@ -61,7 +61,7 @@ public class GameParser {
         return "";
     }
     
-    public List<Game> cachedGames(){
+    private List<Game> cachedGames(){
         List<Game> cachedGames = gamesArray;
         if(!APItimeout){
             APItimeout = !APItimeout;
@@ -71,7 +71,7 @@ public class GameParser {
         return cachedGames;
     }
 
-    public List<Game> checkGames(){
+    private List<Game> checkGames(){
         List<Game> returnList = new ArrayList<>();
         logger.info("Checking games with provided user ID:" + globalUserID);
         Game savedGame;
@@ -85,6 +85,8 @@ public class GameParser {
             } else {
                 logger.info("Game found: " + savedGame.toString());
                 game.setMinutes_played_today(Math.max(game.getPlaytime_forever()-savedGame.getPlaytime_forever(), savedGame.getMinutes_played_today()));
+                savedGame.setMinutes_played_today(game.getMinutes_played_today());
+                gameRepository.save(savedGame);
             }
             if(game.getMinutes_played_today()>0) returnList.add(game);
         }
@@ -92,14 +94,14 @@ public class GameParser {
     }
 
     @PostConstruct
-    public void startUpdate(){
+    private void startUpdate(){
         updateGamesOnSchedule();
         logger.info("Starting timer from " + lastUpdateDate.toString());
         dailyUpdateTimer();
     }
     
     
-    public void updateGamesOnSchedule(){
+    private void updateGamesOnSchedule(){
         logger.info("Updating database on schedule");
         List<String> userArray = gameRepository.findAllUsers();
         if(userArray==null || userArray.size()<1) {
@@ -127,7 +129,7 @@ public class GameParser {
         }
     }
 
-    public List<Game> parseAPIForUserId(String userID){
+    private List<Game> parseAPIForUserId(String userID){
         List<Game> returnList = new ArrayList<>();
         String APIresponse = checkAPI(userID);
         JSONObject jsonResponse = new JSONObject(APIresponse.toString());
@@ -147,7 +149,7 @@ public class GameParser {
         }
         return returnList;
     }
-    public String checkAPI(String userID){
+    private String checkAPI(String userID){
         link = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?count=10&key="+key+"&steamid="+userID;
         logger.info("Checking API");
         String steamJSON="";
