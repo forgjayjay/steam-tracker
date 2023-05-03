@@ -16,7 +16,7 @@ public class Game {
     private int id;
 
     @Column(name = "app_id", unique = false, nullable = false)
-    private long appid;
+    private long app_id;
 
     @Column(name = "game_name", unique = false, nullable = false)
     private String name;
@@ -35,6 +35,23 @@ public class Game {
 
     @Column(name = "minutes_played_today",unique = false, nullable = true)
     private int minutes_played_today;
+
+    public Game(){}
+
+    public Game(String name, int playtime_forever, int playtime_weeks, long app_id, String ownerID){
+        // game.setName(jsonGame.getString("name"));
+        // game.setPlaytime_forever(jsonGame.getInt("playtime_forever"));
+        // game.setPlaytime_weeks(jsonGame.getInt("playtime_2weeks"));
+        // game.setApp_id(jsonGame.getLong("app_id"));
+        // game.setOwnerID(userID);
+        this.name = name;
+        this.playtime_forever = playtime_forever;
+        this.playtime_weeks = playtime_weeks;
+        this.app_id = app_id;
+        this.ownerID = ownerID;
+    }
+
+
 
     public String getOwnerID() {
         return ownerID;
@@ -75,19 +92,19 @@ public class Game {
     public int getPlaytime_weeks() {
         return playtime_weeks;
     }
-    public long getAppid() {
-        return appid;
+    public long getApp_id() {
+        return app_id;
     }
-    public void setAppid(long appid) {
-        this.appid = appid;
+    public void setApp_id(long app_id) {
+        this.app_id = app_id;
     }
     @Override
     public String toString() {
-        return "[ Name: " +name + "; App ID: "+ appid + "; Owner ID: " + ownerID + "; Playtime total: "+ playtime_forever + " Previous playtime total: "+ previous_time + "; Playtime 2 weeks: "+ playtime_weeks + "; Playtime today: " + minutes_played_today+" ]";
+        return "[ Name: " +name + "; App ID: "+ app_id + "; Owner ID: " + ownerID + "; Playtime total: "+ playtime_forever + " Previous playtime total: "+ previous_time + "; Playtime 2 weeks: "+ playtime_weeks + "; Playtime today: " + minutes_played_today+" ]";
     }
     @Override
     public boolean equals(Object obj) {
-        return String.valueOf(appid).equals(String.valueOf(obj));
+        return String.valueOf(app_id).equals(String.valueOf(obj));
     }
     @Override
     public int hashCode() {
