@@ -49,8 +49,8 @@ public class GameParser {
             logger.info("Return array: " + gamesArray);
             data = out.toByteArray();
             return new String("{\"games\":"+ new String(data) + "}");
-        } catch (IOException e) {
-            logger.error("Error occurred: "+e.getMessage());
+        } catch (IOException exception) {
+            logger.error("Error occurred: {}", exception.getMessage());
         }
         return "";
     }
