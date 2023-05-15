@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.forg.steamtracker.Model.Exceptions.UserNotFoundException;
+
 @Service
 public class APIparser{
     @Value("${steam.key}") public String key;
@@ -21,28 +23,32 @@ public class APIparser{
     
     public List<Game> parseAPIForUserId(String userID){
         List<Game> returnList = new ArrayList<>();
-        String APIresponse = checkAPI(userID);
-        if(APIresponse != ""){
-            JSONArray jsonArray = new JSONObject(APIresponse.toString()).getJSONObject("response").getJSONArray("games");
-            Game game;
-            JSONObject jsonGame;
-            for (int i = 0; i < jsonArray.length(); i++) {
-                jsonGame = jsonArray.getJSONObject(i);
-                game = new Game(
-                    jsonGame.getString("name"),
-                    jsonGame.getInt("playtime_forever"),
-                    jsonGame.getInt("playtime_2weeks"),
-                    jsonGame.getLong("appid"),
-                    userID
-                );
-                logger.debug(game.toString());
-                returnList.add(game);
+        try{
+            String APIresponse = checkAPI(userID);
+            if(APIresponse != ""){
+                JSONArray jsonArray = new JSONObject(APIresponse.toString()).getJSONObject("response").getJSONArray("games");
+                Game game;
+                JSONObject jsonGame;
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    jsonGame = jsonArray.getJSONObject(i);
+                    game = new Game(
+                        jsonGame.getString("name"),
+                        jsonGame.getInt("playtime_forever"),
+                        jsonGame.getInt("playtime_2weeks"),
+                        jsonGame.getLong("appid"),
+                        userID
+                    );
+                    logger.debug(game.toString());
+                    returnList.add(game);
+                }
             }
+        } catch (UserNotFoundException exception){
+            logger.error("API returned nothing for given user: {}", exception.getMessage());
         }
         return returnList;
     }
 
-    private String checkAPI(String userID){
+    private String checkAPI(String userID) throws UserNotFoundException{
         final String link = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?count=10&key="+key+"&steamid="+userID;
         logger.info("Checking API");
         StringBuilder sb = new StringBuilder();
@@ -57,11 +63,12 @@ public class APIparser{
                         sb.append(line);
                     }
                 }
+                if(sb.isEmpty()) throw new UserNotFoundException();
             } else {
                 logger.error("API returned error: " + conn.getResponseCode() + " " + conn.getResponseMessage());
             }
-        } catch (IOException e) {
-            logger.error("Error occurred: "+e.getMessage());
+        } catch (IOException exception) {
+            logger.error("Error occurred: {}", exception.getMessage());
         }
         return sb.toString();
     }
