@@ -1,4 +1,4 @@
-package com.forg.steamtracker.Model;
+package com.forg.steamtracker.model;
 
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.forg.steamtracker.Model.Exceptions.UserNotFoundException;
+import com.forg.steamtracker.exceptions.UserNotFoundException;
 
 @ControllerAdvice
 public class ErrorHandler extends ResponseEntityExceptionHandler {

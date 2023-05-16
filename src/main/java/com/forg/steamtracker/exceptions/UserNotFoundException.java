@@ -1,4 +1,4 @@
-package com.forg.steamtracker.Model.Exceptions;
+package com.forg.steamtracker.exceptions;
 
 public class UserNotFoundException extends Exception {
     public UserNotFoundException() {
