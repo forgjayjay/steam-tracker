@@ -1,4 +1,4 @@
-package com.forg.steamtracker.Model;
+package com.forg.steamtracker.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -104,7 +104,7 @@ public class Game {
     }
     @Override
     public boolean equals(Object obj) {
-        return String.valueOf(app_id).equals(String.valueOf(obj));
+        return String.valueOf(app_id).equals(String.valueOf(((Game) obj).getApp_id())) && ownerID.equals(((Game) obj).getOwnerID());
     }
     @Override
     public int hashCode() {

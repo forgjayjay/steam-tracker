@@ -1,4 +1,4 @@
-package com.forg.steamtracker.Controller;
+package com.forg.steamtracker.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
-import com.forg.steamtracker.Model.GameParser;
-import com.forg.steamtracker.Model.GameRepository;
+import com.forg.steamtracker.model.GameParser;
+import com.forg.steamtracker.model.GameRepository;
 
 @Controller
 @SessionAttributes("gameParser")

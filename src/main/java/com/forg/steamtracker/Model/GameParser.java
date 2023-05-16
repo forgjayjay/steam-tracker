@@ -1,4 +1,4 @@
-package com.forg.steamtracker.Model;
+package com.forg.steamtracker.model;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
