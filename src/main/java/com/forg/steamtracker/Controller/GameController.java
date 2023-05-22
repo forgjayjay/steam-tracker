@@ -27,12 +27,12 @@ public class GameController {
     public String displayMyGamesChart(@RequestParam String userID){
         return "my_games";
     }
-    @GetMapping("/my-games-json")
+    @GetMapping("/api/v1/my-games")
     @ResponseBody
     public String displayMyGamesJSONGET(@RequestParam String userID){
         return gameParser.parse(userID);
     }
-    @PostMapping("/my-games-json")
+    @PostMapping("/api/v1/my-games")
     @ResponseBody
     public String displayMyGamesJSONPOST(@RequestParam String userID){
         return gameParser.parse(userID);

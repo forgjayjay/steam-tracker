@@ -111,7 +111,7 @@ public class GameParser {
         Game existingGame;
         for (String localUserID : userArray) {
             for (Game game : parseAPIForUserId(localUserID)) {
-                game.setPrevious_time(game.getPlaytime_forever());
+                //game.setPrevious_time(game.getPlaytime_forever());
                 existingGame = gameRepository.findByNameAndOwnerID(game.getName(), game.getOwnerID());
                 if(existingGame!=null){
                     existingGame.setPrevious_time(existingGame.getPlaytime_forever());
