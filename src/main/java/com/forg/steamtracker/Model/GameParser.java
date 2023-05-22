@@ -1,36 +1,29 @@
-package com.forg.steamtracker.Model;
+package com.forg.steamtracker.model;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.context.annotation.ScopedProxyMode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.annotation.PostConstruct;
 
 @Service
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 @Configurable
 public class GameParser {
-    @Value("${steam.key}") public String key;
     private List<Game> gamesArray;
-    private String link = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?count=10&key="+key+"&steamid=";
     private Logger logger = LoggerFactory.getLogger(GameParser.class);
     private LocalDate lastUpdateDate = LocalDate.now();
     private Timer timer = new Timer();
@@ -39,7 +32,8 @@ public class GameParser {
     private String globalUserID;
     @Autowired
     GameRepository gameRepository;
-  
+    @Autowired
+    APIparser apiParser;
     public GameParser (){
         
     }
@@ -55,8 +49,8 @@ public class GameParser {
             logger.info("Return array: " + gamesArray);
             data = out.toByteArray();
             return new String("{\"games\":"+ new String(data) + "}");
-        } catch (IOException e) {
-            logger.error("Error occurred: "+e.getMessage());
+        } catch (IOException exception) {
+            logger.error("Error occurred: {}", exception.getMessage());
         }
         return "";
     }
@@ -75,7 +69,7 @@ public class GameParser {
         List<Game> returnList = new ArrayList<>();
         logger.info("Checking games with provided user ID:" + globalUserID);
         Game savedGame;
-        for (Game game : parseAPIForUserId(globalUserID)) {
+        for (Game game : apiParser.parseAPIForUserId(globalUserID)) {
             savedGame = gameRepository.findByNameAndOwnerID(game.getName(), game.getOwnerID());
             if(savedGame==null) {
                 logger.info("Game not found: " + game.toString());
@@ -100,7 +94,6 @@ public class GameParser {
         dailyUpdateTimer();
     }
     
-    
     private void updateGamesOnSchedule(){
         logger.info("Updating database on schedule");
         List<String> userArray = gameRepository.findAllUsers();
@@ -110,8 +103,8 @@ public class GameParser {
         }
         Game existingGame;
         for (String localUserID : userArray) {
-            for (Game game : parseAPIForUserId(localUserID)) {
-                //game.setPrevious_time(game.getPlaytime_forever());
+            for (Game game : apiParser.parseAPIForUserId(localUserID)) {
+                game.setPrevious_time(game.getPlaytime_forever());
                 existingGame = gameRepository.findByNameAndOwnerID(game.getName(), game.getOwnerID());
                 if(existingGame!=null){
                     existingGame.setPrevious_time(existingGame.getPlaytime_forever());
@@ -127,48 +120,6 @@ public class GameParser {
                 }
             }   
         }
-    }
-
-    private List<Game> parseAPIForUserId(String userID){
-        List<Game> returnList = new ArrayList<>();
-        String APIresponse = checkAPI(userID);
-        JSONObject jsonResponse = new JSONObject(APIresponse.toString());
-        JSONObject jsonObject = jsonResponse.getJSONObject("response");
-        JSONArray jsonArray = jsonObject.getJSONArray("games");
-        Game game;
-        for (int i = 0; i < jsonArray.length(); i++) {
-            game = new Game();
-            jsonObject = jsonArray.getJSONObject(i);
-            game.setName(jsonObject.getString("name"));
-            game.setPlaytime_forever(jsonObject.getInt("playtime_forever"));
-            game.setPlaytime_weeks(jsonObject.getInt("playtime_2weeks"));
-            game.setAppid(jsonObject.getLong("appid"));
-            game.setOwnerID(userID);
-            logger.debug(game.toString());
-            returnList.add(game);
-        }
-        return returnList;
-    }
-    private String checkAPI(String userID){
-        link = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?count=10&key="+key+"&steamid="+userID;
-        logger.info("Checking API");
-        String steamJSON="";
-        StringBuilder sb = new StringBuilder();
-        try {
-            URL url = new URL(link);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("GET");
-            BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String line;
-            while ((line = rd.readLine()) != null) {
-              sb.append(line);
-            }
-            rd.close();
-            steamJSON = sb.toString();
-        } catch (Exception e) {
-            logger.error("Error occurred: "+e.getMessage());
-       }
-       return steamJSON;
     }
 
     private void dailyUpdateTimer(){

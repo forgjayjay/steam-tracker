@@ -1,4 +1,4 @@
-package com.forg.steamtracker.Model;
+package com.forg.steamtracker.model;
 
 import java.util.List;
 
