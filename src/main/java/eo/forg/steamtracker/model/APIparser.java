@@ -1,4 +1,5 @@
-package com.forg.steamtracker.model;
+package eo.forg.steamtracker.model;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.forg.steamtracker.exceptions.UserNotFoundException;
+import eo.forg.steamtracker.exceptions.UserNotFoundException;
 
 @Service
 public class APIparser{

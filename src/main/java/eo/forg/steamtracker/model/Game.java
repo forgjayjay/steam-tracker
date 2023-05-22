@@ -1,4 +1,4 @@
-package com.forg.steamtracker.model;
+package eo.forg.steamtracker.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
