@@ -7,10 +7,10 @@
     </head>
     <body>
         <form id="form" action="/my-games" method="get">
-            <input type="text" name="userID"/><br/>
+            <input type="text" name="userID" required/><br/>
             <input type="submit" value="Find me!">
         </form>
     </body>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript" th:src="@{/js/scripts.js}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" th:src="@{js/form-subm.js}"></script>
 </html>

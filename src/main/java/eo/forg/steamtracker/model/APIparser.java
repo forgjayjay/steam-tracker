@@ -49,6 +49,10 @@ public class APIparser{
         return returnList;
     }
 
+    public String parseAPIForUserIdRaw(String userID) throws UserNotFoundException{
+        return checkAPI(userID);
+    }
+
     private String checkAPI(String userID) throws UserNotFoundException{
         final String link = "https://api.steampowered.com/IPlayerService/GetRecentlyPlayedGames/v1/?count=10&key="+key+"&steamid="+userID;
         logger.info("Checking API");

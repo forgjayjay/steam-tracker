@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import eo.forg.steamtracker.exceptions.UserNotFoundException;
 import eo.forg.steamtracker.model.GameParser;
 import eo.forg.steamtracker.model.GameRepository;
 
@@ -27,7 +28,7 @@ public class GameController {
     }
     @GetMapping("/my-games")
     public String displayMyGamesChart(@RequestParam String userID){
-        return "my_games";
+        return "my-games";
     }
     @GetMapping("/api/v1/my-games")
     @ResponseBody
@@ -38,5 +39,15 @@ public class GameController {
     @ResponseBody
     public String displayMyGamesJSONPOST(@RequestParam String userID){
         return gameParser.parse(userID);
+    }
+    @GetMapping("/api/v1/my-games-raw")
+    @ResponseBody
+    public String displayMyGamesRaw(@RequestParam String userID){
+        try {
+            return gameParser.parseRaw(userID);
+        } catch (UserNotFoundException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 }
