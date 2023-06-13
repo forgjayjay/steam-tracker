@@ -48,6 +48,7 @@ function showChart(){
                 document.getElementById('chart-1').style = 'max-width: ' + jsonData.games.length*10 + 'vw';
             }else{
                 pElem = document.createElement('p');
+                pElem.style.fontSize = "4rem";
                 pElem.innerHTML = "Oops! No games found.";
                 document.getElementById("mainContainer").appendChild(pElem);
             }

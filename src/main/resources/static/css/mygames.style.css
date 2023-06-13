@@ -6,11 +6,11 @@ body {
     align-items:center;
     justify-content: center;
     display: flex;
-    color: rgb(182, 245, 224);
+    color: rgb(13, 14, 13);
     bottom: 5%
 }
 #mainContainer{
-    font-size: 5rem;
+    font-size: 1rem;
 }
 #chart-1{
     height: 200;
