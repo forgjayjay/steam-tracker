@@ -9,9 +9,6 @@ body {
     color: rgb(13, 14, 13);
     bottom: 5%
 }
-#mainContainer{
-    font-size: 1rem;
-}
 #chart-1{
     height: 200;
     margin: 0 auto;
