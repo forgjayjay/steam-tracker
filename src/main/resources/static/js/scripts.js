@@ -1,3 +1,6 @@
+let chart = document.getElementById('chart-1');
+chart.style.disabled = true;
+chart.style.opacity = 0;
 window.addEventListener('load', showChart());
 var game;
 var newRow;
@@ -21,6 +24,7 @@ function showChart(){
         type: "GET",
         success: function(data) {
             jsonData = JSON.parse(data);
+            
             if(jsonData.games.length > 0){
                 for (var i = 0; i < jsonData.games.length; i++) {
                     game = jsonData.games[i];
@@ -31,6 +35,7 @@ function showChart(){
 
                     th = document.createElement('th');
                     th.innerHTML = game.name;
+                    th.style.whiteSpace = "nowrap";
 
                     td = document.createElement('td');
                     data = document.createElement('span');
@@ -45,8 +50,12 @@ function showChart(){
                         newCell.appendChild(td);
                     }
                 }
+                chart.style.disabled = false;
+                chart.style.opacity = 1;
                 document.getElementById('chart-1').style = 'max-width: ' + jsonData.games.length*10 + 'vw';
             }else{
+                
+                
                 pElem = document.createElement('p');
                 pElem.style.fontSize = "4rem";
                 pElem.innerHTML = "Oops! No games found.";

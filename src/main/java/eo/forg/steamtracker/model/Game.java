@@ -1,11 +1,15 @@
 package eo.forg.steamtracker.model;
 
+import java.util.Date;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name = "game")
@@ -35,6 +39,9 @@ public class Game {
 
     @Column(name = "minutes_played_today",unique = false, nullable = true)
     private int minutes_played_today;
+
+    @Temporal(TemporalType.DATE)
+    Date previous_update_date;
 
     public Game(){}
 
@@ -97,6 +104,12 @@ public class Game {
     }
     public void setApp_id(long app_id) {
         this.app_id = app_id;
+    }
+    public void setPrevious_update_date(Date previous_update_date) {
+        this.previous_update_date = previous_update_date;
+    }
+    public Date getPrevious_update_date() {
+        return previous_update_date;
     }
     @Override
     public String toString() {

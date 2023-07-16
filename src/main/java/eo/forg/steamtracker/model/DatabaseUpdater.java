@@ -1,8 +1,12 @@
 package eo.forg.steamtracker.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -46,15 +50,24 @@ public class DatabaseUpdater {
             for (Game game : apiParser.parseAPIForUserId(localUserID)) {
                 game.setPrevious_time(game.getPlaytime_forever());
                 existingGame = gameRepository.findByNameAndOwnerID(game.getName(), game.getOwnerID());
+                Date lastUpdate = new Date();
                 if(existingGame==null){
                     game.setMinutes_played_today(0);
                     logger.info("Update games on load didn't find existing game, adding it to repository: {}", game.toString());
+                    game.setPrevious_update_date(lastUpdate);
                     gameRepository.save(game);
                 }else {
-                    
-                    existingGame.setPrevious_time(existingGame.getPlaytime_forever());
-                    existingGame.setPlaytime_forever(game.getPlaytime_forever());
-                    existingGame.setMinutes_played_today(0);
+                    LocalDateTime ldt = LocalDateTime.now();
+                    String formattedDateStr = DateTimeFormatter
+                                                    .ofPattern("yyyy-MM-dd", Locale.ENGLISH)
+                                                    .format(ldt);
+
+                    if(!existingGame.getPrevious_update_date().toString().equals(formattedDateStr)) {
+                        existingGame.setPrevious_time(existingGame.getPlaytime_forever());
+                        existingGame.setPlaytime_forever(game.getPlaytime_forever());
+                        existingGame.setMinutes_played_today(0);
+                        existingGame.setPrevious_update_date(lastUpdate);
+                    }
                     logger.info("Update games on load found existing game: {}", existingGame.toString());
                     gameRepository.save(existingGame);
                 }

@@ -9,9 +9,18 @@ body {
     color: rgb(13, 14, 13);
     bottom: 5%
 }
+#mainContainer{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
 #chart-1{
     height: 200;
     margin: 0 auto;
+}
+#chart-1.column{
+    --labels-size:3rem;
 }
 #chart-1 tr {
     transition-duration: 0.3s;

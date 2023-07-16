@@ -3,6 +3,7 @@ package eo.forg.steamtracker.model;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -71,16 +72,19 @@ public class GameParser {
         for (Game game : apiParser.parseAPIForUserId(globalUserID)) {
             savedGame = gameRepository.findByNameAndOwnerID(game.getName(), game.getOwnerID());
             logger.info("Looking for {} in the database", game);
+            Date lastUpdate = new Date();
             if(savedGame==null) {
                 logger.info("Game not found: {}", game.toString());
                 game.setMinutes_played_today(game.getPlaytime_weeks());
                 game.setPrevious_time(0);
+                game.setPrevious_update_date(lastUpdate);
                 gameRepository.save(game);
             } else {
                 logger.info("Game found: {}", savedGame.toString());
-                game.setMinutes_played_today(Math.max(game.getPlaytime_forever()-savedGame.getPlaytime_forever(), savedGame.getMinutes_played_today()));
-                savedGame.setMinutes_played_today(game.getMinutes_played_today());
+                //game.setMinutes_played_today(Math.max(game.getPlaytime_forever()-savedGame.getPlaytime_forever(), savedGame.getMinutes_played_today()));
+                savedGame.setMinutes_played_today(Math.max(game.getPlaytime_forever()-savedGame.getPlaytime_forever(), savedGame.getMinutes_played_today()));
                 gameRepository.save(savedGame);
+                game = savedGame;
             }
             if(game.getMinutes_played_today()>0) returnList.add(game);
         }
