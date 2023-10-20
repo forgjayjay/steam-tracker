@@ -1,4 +1,4 @@
-package eo.forg.steamtracker.model;
+package eo.forg.steamtracker.services;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,6 +17,8 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eo.forg.steamtracker.exceptions.UserNotFoundException;
+import eo.forg.steamtracker.model.Game;
+import eo.forg.steamtracker.model.GameRepository;
 
 @Service
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -78,17 +80,19 @@ public class GameParser {
                 game.setMinutes_played_today(game.getPlaytime_weeks());
                 game.setPrevious_time(0);
                 game.setPrevious_update_date(lastUpdate);
-                gameRepository.save(game);
             } else {
                 logger.info("Game found: {}", savedGame.toString());
-                //game.setMinutes_played_today(Math.max(game.getPlaytime_forever()-savedGame.getPlaytime_forever(), savedGame.getMinutes_played_today()));
                 savedGame.setMinutes_played_today(Math.max(game.getPlaytime_forever()-savedGame.getPlaytime_forever(), savedGame.getMinutes_played_today()));
-                gameRepository.save(savedGame);
                 game = savedGame;
             }
+            save(game);
             if(game.getMinutes_played_today()>0) returnList.add(game);
         }
         return returnList;
+    }
+
+    private void save(Game game){
+        gameRepository.save(game);
     }
 
     private void APItimer(){

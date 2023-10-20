@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import eo.forg.steamtracker.exceptions.UserNotFoundException;
-import eo.forg.steamtracker.model.GameParser;
 import eo.forg.steamtracker.model.GameRepository;
+import eo.forg.steamtracker.services.GameParser;
 
 @Controller
 @SessionAttributes("gameParser")

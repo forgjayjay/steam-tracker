@@ -1,4 +1,4 @@
-package eo.forg.steamtracker.model;
+package eo.forg.steamtracker.services;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,10 +16,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import eo.forg.steamtracker.exceptions.UserNotFoundException;
+import eo.forg.steamtracker.model.Game;
 
 @Service
 public class APIparser{
-    @Value("${steam.key}") public String key;
+    @Value("${steam.key}") private String key;
     private Logger logger = LoggerFactory.getLogger(APIparser.class);
     
     public List<Game> parseAPIForUserId(String userID){

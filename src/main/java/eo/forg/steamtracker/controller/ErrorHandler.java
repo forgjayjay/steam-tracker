@@ -1,4 +1,9 @@
-package eo.forg.steamtracker.model;
+package eo.forg.steamtracker.controller;
+
+/*
+ * This one is absolutely broken and requires more time to finish
+ */
+
 
 // import org.springframework.http.HttpHeaders;
 // import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package eo.forg.steamtracker.model;
+package eo.forg.steamtracker.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import eo.forg.steamtracker.model.Game;
+import eo.forg.steamtracker.model.GameRepository;
 import jakarta.annotation.PostConstruct;
 
 @Service
