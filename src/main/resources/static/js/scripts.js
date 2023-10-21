@@ -40,7 +40,9 @@ function showChart(){
                     td = document.createElement('td');
                     data = document.createElement('span');
                     data.className = 'data';
-                    data.innerHTML = game.minutes_played_today;
+                    if(game.minutes_played_today > 30){
+                        data.innerHTML = game.minutes_played_today;
+                    }
                     td.style = 'background-color:transparent';
                     td.appendChild(data);
                     
@@ -58,6 +60,8 @@ function showChart(){
                 
                 pElem = document.createElement('p');
                 pElem.style.fontSize = "4rem";
+                pElem.style.alignSelf   = "center";
+                pElem.style.position   = "absolute";
                 pElem.innerHTML = "Oops! No games found.";
                 document.getElementById("mainContainer").appendChild(pElem);
             }

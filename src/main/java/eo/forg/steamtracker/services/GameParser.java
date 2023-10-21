@@ -80,12 +80,13 @@ public class GameParser {
                 game.setMinutes_played_today(game.getPlaytime_weeks());
                 game.setPrevious_time(0);
                 game.setPrevious_update_date(lastUpdate);
+                save(game);
             } else {
                 logger.info("Game found: {}", savedGame.toString());
                 savedGame.setMinutes_played_today(Math.max(game.getPlaytime_forever()-savedGame.getPlaytime_forever(), savedGame.getMinutes_played_today()));
+                save(savedGame);
                 game = savedGame;
             }
-            save(game);
             if(game.getMinutes_played_today()>0) returnList.add(game);
         }
         return returnList;

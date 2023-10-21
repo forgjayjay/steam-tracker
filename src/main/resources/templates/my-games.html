@@ -4,17 +4,15 @@
         <title>whatdidiplaytoday?</title>
         <link th:href="@{css/charts.min.css}" rel="stylesheet">
         <link th:href="@{css/mygames.style.css}" rel="stylesheet">
-    </head>
     <body>
         <div id="mainContainer">
-            
+            <table id="chart-1" class="charts-css column show-labels show-primary-axis show-5-secondary-axes data-spacing-1 show-data-on-hover" style="background-color: blue;">
+                <caption>Games chart</caption>
+                <tbody>
+    
+                </tbody>
+            </table>  
         </div>
-        <table id="chart-1" class="charts-css column show-labels show-primary-axis show-5-secondary-axes data-spacing-1 show-data-on-hover">
-            <caption>Games chart</caption>
-            <tbody>
-
-            </tbody>
-        </table>
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script type="text/javascript" th:src="@{/js/scripts.js}"></script>

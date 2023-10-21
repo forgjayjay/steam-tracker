@@ -1,17 +1,18 @@
 body {
     background: rgba(30,30,30,255);
+    color: rgb(189, 209, 202);
+    overflow: hidden;
 }
 #mainContainer{
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     display: flex;
-    justify-content: center; 
-    align-items: center;
-    color: rgb(189, 209, 202);
+    justify-content: center;
+    margin: -10px;
+    height: 100%;
+    width: 100%;
 }
 #chart-1{
+    align-self:flex-end;
     height: 200;
     margin: 0 auto;
 }

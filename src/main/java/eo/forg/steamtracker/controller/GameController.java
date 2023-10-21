@@ -22,7 +22,7 @@ public class GameController {
     @Autowired
     GameParser gameParser;
     
-    @GetMapping("")
+    @GetMapping({"","home","/"})
     public String mainPage(){   
         return "index";
     }
