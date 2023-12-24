@@ -29,3 +29,15 @@ body {
 #chart-1 tr:hover th {
     background-color: rgba(43, 67, 77, 0.2);
 }
+
+.data{
+    color: white;
+    font-family: cursive;
+    text-shadow: 1px 1px 1px black;
+}
+
+#min-to-hour {
+    position: absolute;
+    top: 90vh;
+    right: 5vh;
+}

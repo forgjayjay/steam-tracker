@@ -17,6 +17,8 @@ function prepareLink(){
     console.log(link);
 }
 
+var map = {};
+
 function showChart(){
     prepareLink();
     const tbodyRef = document.getElementById('chart-1').getElementsByTagName('tbody')[0];
@@ -24,24 +26,30 @@ function showChart(){
         type: "GET",
         success: function(data) {
             jsonData = JSON.parse(data);
-            
+            console.log(jsonData.games)
             if(jsonData.games.length > 0){
                 for (var i = 0; i < jsonData.games.length; i++) {
                     game = jsonData.games[i];
                     
                     newRow = tbodyRef.insertRow();
                     newCell = newRow.insertCell();
-                    newCell.style = '--size: ' + (game.minutes_played_today/1440);
+                    newCell.style = '--size: ' + (game.minutes_played_today/60/24);
 
                     th = document.createElement('th');
                     th.innerHTML = game.name;
                     th.style.whiteSpace = "nowrap";
 
                     td = document.createElement('td');
+                    //td.id = 'column_'+i;
+                    
                     data = document.createElement('span');
+                    data.id = 'data_'+i;
                     data.className = 'data';
+
+                    map[i] = game.minutes_played_today + ' minutes';
+
                     if(game.minutes_played_today > 30){
-                        data.innerHTML = game.minutes_played_today;
+                        data.innerHTML = (game.minutes_played_today/60).toFixed(2) + ' hours';
                     }
                     td.style = 'background-color:transparent';
                     td.appendChild(data);
@@ -62,7 +70,7 @@ function showChart(){
                 pElem.style.fontSize = "4rem";
                 pElem.style.alignSelf   = "center";
                 pElem.style.position   = "absolute";
-                pElem.innerHTML = "Oops! No games found.";
+                pElem.innerHTML = "No information available";
                 document.getElementById("mainContainer").appendChild(pElem);
             }
         },
@@ -74,4 +82,18 @@ function showChart(){
         }
     });
     
+}
+
+function create_table(arr) {
+    
+}
+
+function min_to_hour() {
+    var tds = document.querySelectorAll('tbody tr'), i;
+    for(i = 0; i < tds.length; ++i) {
+        data_seg = document.querySelector('#data_'+i);
+        let temp = data_seg.innerHTML;
+        data_seg.innerHTML = map[i];
+        map[i] = temp;
+    }
 }
