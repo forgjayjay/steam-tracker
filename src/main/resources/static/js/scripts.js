@@ -61,6 +61,7 @@ function showChart(){
                     }
                 }
                 chart.style.disabled = false;
+                document.querySelector('#min-to-hour').style.opacity = 1;
                 chart.style.opacity = 1;
                 document.getElementById('chart-1').style = 'max-width: ' + jsonData.games.length*10 + 'vw';
             }else{
@@ -81,10 +82,6 @@ function showChart(){
             console.log('done');
         }
     });
-    
-}
-
-function create_table(arr) {
     
 }
 

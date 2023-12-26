@@ -38,6 +38,7 @@ body {
 
 #min-to-hour {
     position: absolute;
+    opacity: 0;
     top: 90vh;
     right: 5vh;
 }
