@@ -46,10 +46,11 @@ function showChart(){
                     data.id = 'data_'+i;
                     data.className = 'data';
 
-                    map[i] = game.minutes_played_today + ' minutes';
+                    map[i] = '';
 
                     if(game.minutes_played_today > 30){
                         data.innerHTML = (game.minutes_played_today/60).toFixed(2) + ' hours';
+                        map[i] = game.minutes_played_today + ' minutes';
                     }
                     td.style = 'background-color:transparent';
                     td.appendChild(data);
