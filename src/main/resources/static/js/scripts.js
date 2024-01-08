@@ -23,7 +23,7 @@ function showChart(){
     prepareLink();
     const tbodyRef = document.getElementById('chart-1').getElementsByTagName('tbody')[0];
     $.ajax(link, {
-        type: "GET",
+        type: 'GET',
         success: function(data) {
             jsonData = JSON.parse(data);
             console.log(jsonData.games)
@@ -49,10 +49,14 @@ function showChart(){
                     map[i] = '';
 
                     if(game.minutes_played_today > 30){
-                        data.innerHTML = (game.minutes_played_today/60).toFixed(2) + ' hours';
+                        if(game.minutes_played_today > 60){
+                            data.innerHTML = parseInt(game.minutes_played_today/60,10) + ' hours<br>' + ((game.minutes_played_today%60 > 0) ? game.minutes_played_today%60 + ' minute(s)' : '');
+                        } else{
+                            data.innerHTML = game.minutes_played_today +' minutes';
+                        }
                         map[i] = game.minutes_played_today + ' minutes';
                     }
-                    td.style = 'background-color:transparent';
+                    td.style = 'background-color:transparent; text-align: center';
                     td.appendChild(data);
                     
                     newCell.appendChild(th);
@@ -70,8 +74,8 @@ function showChart(){
                 
                 pElem = document.createElement('p');
                 pElem.style.fontSize = "4rem";
-                pElem.style.alignSelf   = "center";
-                pElem.style.position   = "absolute";
+                pElem.style.alignSelf = "center";
+                pElem.style.position = "absolute";
                 pElem.innerHTML = "No information available";
                 document.getElementById("mainContainer").appendChild(pElem);
             }
@@ -93,5 +97,6 @@ function min_to_hour() {
         let temp = data_seg.innerHTML;
         data_seg.innerHTML = map[i];
         map[i] = temp;
+        console.log(temp)
     }
 }
