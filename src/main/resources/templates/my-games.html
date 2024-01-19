@@ -3,6 +3,7 @@
         <meta charset="ISO-8859-1">
         <title>whatdidiplaytoday?</title>
         <link th:href="@{css/charts.min.css}" rel="stylesheet">
+        <link th:href="@{css/base.css}" rel="stylesheet">
         <link th:href="@{css/mygames.style.css}" rel="stylesheet">
     <body>
         <div id="mainContainer">
@@ -13,7 +14,8 @@
                 </tbody>
             </table>  
         </div>
-        <label id="min-to-hour"><input type="checkbox"  id="min-to-hour_checkbox" onclick="min_to_hour()"> In minutes</label>
+        <a class="tooltip" href="#">?<span class="tooltiptext">If You don't see any values attached to the columns, it means that the amount played is less than 30 minutes!</span></a>
+        <label id="min-to-hour">In minutes <input type="checkbox"  id="min-to-hour_checkbox" onclick="min_to_hour()"></label>
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
     <script type="text/javascript" th:src="@{/js/scripts.js}"></script>

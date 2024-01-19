@@ -37,6 +37,7 @@ function showChart(){
 
                     th = document.createElement('th');
                     th.innerHTML = game.name;
+                    th.style.fontSize = "1.2rem";
                     th.style.whiteSpace = "nowrap";
 
                     td = document.createElement('td');
@@ -48,8 +49,8 @@ function showChart(){
 
                     map[i] = '';
 
-                    if(game.minutes_played_today > 30){
-                        if(game.minutes_played_today > 60){
+                    if(game.minutes_played_today >= 30){
+                        if(game.minutes_played_today >= 60){
                             data.innerHTML = parseInt(game.minutes_played_today/60,10) + ' hours<br>' + ((game.minutes_played_today%60 > 0) ? game.minutes_played_today%60 + ' minute(s)' : '');
                         } else{
                             data.innerHTML = game.minutes_played_today +' minutes';
