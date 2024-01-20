@@ -68,6 +68,8 @@ function showChart(){
                 }
                 chart.style.disabled = false;
                 document.querySelector('#min-to-hour').style.opacity = 1;
+                document.querySelector('.tooltip').style.opacity = 1;
+                document.querySelector('.tooltiptext').style.opacity = 1;
                 chart.style.opacity = 1;
                 document.getElementById('chart-1').style = 'max-width: ' + jsonData.games.length*10 + 'vw';
             }else{
@@ -77,7 +79,7 @@ function showChart(){
                 pElem.style.fontSize = "4rem";
                 pElem.style.alignSelf = "center";
                 pElem.style.position = "absolute";
-                pElem.innerHTML = "No information available";
+                pElem.innerHTML = "No information available";              
                 document.getElementById("mainContainer").appendChild(pElem);
             }
         },

@@ -19,6 +19,7 @@ body {
     -webkit-box-shadow: inset -1px -1px 1px 0px rgba(0,0,0,0.25);
     -moz-box-shadow: inset -1px -1px 1px 0px rgba(0,0,0,0.25);
     box-shadow: inset -1px -1px 1px 0px rgba(0,0,0,0.25);
+    opacity: 0;
     z-index: 2;
 }
 .tooltip .tooltiptext {
@@ -37,6 +38,7 @@ body {
     z-index: 1;
     bottom: 20px;
     right: 1rem;
+    opacity: 0;
   }
   
   .tooltip:hover .tooltiptext {
