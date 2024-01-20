@@ -2,15 +2,12 @@ let chart = document.getElementById('chart-1');
 chart.style.disabled = true;
 chart.style.opacity = 0;
 window.addEventListener('load', showChart());
-var game;
-var newRow;
-var newCell;
-var jsonData;
+
+var game, link, th, td, data, newRow, newCell, jsonData;
 var params = new URLSearchParams(document.location.search);
-var link;
-var th;
-var td;
-var data;
+
+
+
 function prepareLink(){
     params = new URLSearchParams(document.location.search);
     link = '/api/v1/my-games?userID=' + params.get('userID');
@@ -20,8 +17,10 @@ function prepareLink(){
 var map = {};
 
 function showChart(){
+    //document.querySelector('.lds-ring').style.opacity = 1;
     prepareLink();
-    const tbodyRef = document.getElementById('chart-1').getElementsByTagName('tbody')[0];
+    const tbodyRef = chart.getElementsByTagName('tbody')[0];
+
     $.ajax(link, {
         type: 'GET',
         success: function(data) {
@@ -66,21 +65,16 @@ function showChart(){
                         newCell.appendChild(td);
                     }
                 }
-                chart.style.disabled = false;
-                document.querySelector('#min-to-hour').style.opacity = 1;
-                document.querySelector('.tooltip').style.opacity = 1;
-                document.querySelector('.tooltiptext').style.opacity = 1;
-                chart.style.opacity = 1;
-                document.getElementById('chart-1').style = 'max-width: ' + jsonData.games.length*10 + 'vw';
+
+                postLoad();
+
             }else{
-                
-                
                 pElem = document.createElement('p');
                 pElem.style.fontSize = "4rem";
                 pElem.style.alignSelf = "center";
                 pElem.style.position = "absolute";
                 pElem.innerHTML = "No information available";              
-                document.getElementById("mainContainer").appendChild(pElem);
+                document.getElementById("main-container").appendChild(pElem);
             }
         },
         error: function(data) {
@@ -91,6 +85,17 @@ function showChart(){
         }
     });
     
+}
+
+function postLoad() {
+    chart.style.disabled = false;
+    chart.style.opacity = 1;
+    chart.style = 'max-width: ' + jsonData.games.length*10 + 'vw';
+    document.querySelector('.lds-ring').style.opacity = 0;
+    document.querySelector('.lds-ring').style.position = "absolute";
+    document.querySelector('#min-to-hour').style.opacity = 1;
+    document.querySelector('.tooltip').style.opacity = 1;
+    document.querySelector('.tooltiptext').style.opacity = 1;
 }
 
 function min_to_hour() {

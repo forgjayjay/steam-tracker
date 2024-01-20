@@ -4,9 +4,10 @@
         <title>whatdidiplaytoday?</title>
         <link th:href="@{css/charts.min.css}" rel="stylesheet">
         <link th:href="@{css/base.css}" rel="stylesheet">
-        <link th:href="@{css/mygames.style.css}" rel="stylesheet">
+        <link th:href="@{css/my-games.style.css}" rel="stylesheet">
     <body>
-        <div id="mainContainer">
+        <div id="lds-container"><div class="lds-ring"><div></div><div></div><div></div><div></div></div></div>
+        <div id="main-container">
             <table id="chart-1" class="charts-css column show-labels show-primary-axis show-5-secondary-axes data-spacing-1 show-data-on-hover">
                 <caption>Games chart</caption>
                 <tbody>
@@ -18,5 +19,5 @@
         <label id="min-to-hour">In minutes <input type="checkbox"  id="min-to-hour_checkbox" onclick="min_to_hour()"></label>
     </body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script type="text/javascript" th:src="@{/js/scripts.js}"></script>
+    <script type="text/javascript" th:src="@{/js/my-games.js}"></script>
 </html>
