@@ -17,7 +17,6 @@ function prepareLink(){
 var map = {};
 
 function showChart(){
-    //document.querySelector('.lds-ring').style.opacity = 1;
     prepareLink();
     const tbodyRef = chart.getElementsByTagName('tbody')[0];
 
@@ -50,7 +49,9 @@ function showChart(){
 
                     if(game.minutes_played_today >= 30){
                         if(game.minutes_played_today >= 60){
-                            data.innerHTML = parseInt(game.minutes_played_today/60,10) + ' hours<br>' + ((game.minutes_played_today%60 > 0) ? game.minutes_played_today%60 + ' minute(s)' : '');
+                            let hours = parseInt(game.minutes_played_today/60,10);
+                            let minutes = game.minutes_played_today%60;
+                            data.innerHTML = (hours + ' hour'+ (hours > 1 ? 's' : '')) + '<br>' + (minutes > 0 ? (minutes + ' minute' + (minutes > 1 ? 's' : '')) : '');
                         } else{
                             data.innerHTML = game.minutes_played_today +' minutes';
                         }
@@ -69,6 +70,7 @@ function showChart(){
                 postLoad();
 
             }else{
+                document.querySelector('.lds-ring').style.opacity = 0;
                 pElem = document.createElement('p');
                 pElem.style.fontSize = "4rem";
                 pElem.style.alignSelf = "center";
