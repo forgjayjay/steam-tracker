@@ -92,7 +92,7 @@ public class DatabaseUpdater {
                     dailyUpdateTimer();
                 }
             }
-        }, next.getTime(), 60 * 60 * 1000);
+        }, next.getTime(), 60 * 1000);
     }
 
 }
