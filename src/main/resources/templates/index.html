@@ -1,12 +1,13 @@
 <!DOCTYPE html>
     <head>
         <meta charset="ISO-8859-1">
-        <title>whatdidiplaytoday?</title>
+        <title>steam-tracker</title>
         <link th:href="@{css/charts.min.css}" rel="stylesheet">
         <link th:href="@{css/base.css}" rel="stylesheet">
         <link th:href="@{css/index.style.css}" rel="stylesheet">
     </head>
     <body>
+        <a href="/" class="nav">HOME</a>
         <div id="form-container">
             <form id="form" action="/my-games" method="get">
                 <input type="text" name="userID" required/><br/>

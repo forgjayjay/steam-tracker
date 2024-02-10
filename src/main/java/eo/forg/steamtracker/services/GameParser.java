@@ -4,9 +4,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +17,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import eo.forg.steamtracker.exceptions.UserNotFoundException;
+import eo.forg.steamtracker.model.CustomTimer;
 import eo.forg.steamtracker.model.Game;
 import eo.forg.steamtracker.model.GameRepository;
 
@@ -25,8 +26,9 @@ import eo.forg.steamtracker.model.GameRepository;
 @Configurable
 public class GameParser {
     private List<Game> gamesArray;
+    private Map<String, List<Game>> map = new HashMap<>();
+    private Map<String, CustomTimer> userTimerMap = new HashMap<>();
     private Logger logger = LoggerFactory.getLogger(GameParser.class);
-    private boolean APItimeout = false;
     private String globalUserID;
     @Autowired
     GameRepository gameRepository;
@@ -58,12 +60,23 @@ public class GameParser {
     }
     
     private List<Game> cachedGames(){
-        List<Game> cachedGames = gamesArray;
-        if(!APItimeout){
-            APItimeout = !APItimeout;
-            APItimer();
-            cachedGames = checkGames();
+        List<Game> cachedGames = new ArrayList<>();
+
+        if(userTimerMap.get(globalUserID) == null){
+            userTimerMap.put(globalUserID, new CustomTimer());
         }
+
+        CustomTimer timer = userTimerMap.get(globalUserID);
+        if(!timer.isActive()){
+            timer.startTimer();
+            cachedGames = checkGames();
+            map.put(globalUserID, cachedGames);
+        } else {
+            cachedGames = map.get(globalUserID);
+        }
+
+        if(cachedGames.size()>7) cachedGames = cachedGames.subList(0, 7 );
+
         return cachedGames;
     }
 
@@ -92,18 +105,8 @@ public class GameParser {
         return returnList;
     }
 
+    @SuppressWarnings("null")
     private void save(Game game){
         gameRepository.save(game);
-    }
-
-    private void APItimer(){
-        Timer APItimer = new Timer();
-
-        APItimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                APItimeout = !APItimeout;   
-            }
-        }, 10 * 60 * 1000);
     }
 }

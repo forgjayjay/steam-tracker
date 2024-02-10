@@ -41,3 +41,22 @@ body {
   .tooltip:hover .tooltiptext {
     visibility: visible;
   }  
+
+  .nav{
+    position: absolute;
+    color: white;
+    z-index: 10;
+    padding: 1rem;
+    font-size: 1.5rem;
+    text-decoration: none; 
+    font-family: cursive;
+    text-shadow: 1px 1px 1px black;
+  }
+
+  .nav:hover{
+    color: red;
+  }
+  .nav:active{
+    color: red;
+  }
+

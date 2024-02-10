@@ -31,7 +31,7 @@ function showChart(){
                     
                     newRow = tbodyRef.insertRow();
                     newCell = newRow.insertCell();
-                    newCell.style = '--size: ' + (game.minutes_played_today/60/24);
+                    newCell.style = '--size: ' + (game.minutes_played_today/60/24 + 0.02);
 
                     th = document.createElement('th');
                     th.innerHTML = game.name;

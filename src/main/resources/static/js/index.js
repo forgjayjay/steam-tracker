@@ -25,8 +25,9 @@ form.addEventListener('submit', (event) => {
 
 function trimUrl(urlString) {
     let returnString = urlString;
-    const pattern = new RegExp("(?:https?:\\/\\/)?steamcommunity\\.com\\/(?:profiles)\\/[a-zA-Z0-9]+");
-    if (pattern.test(urlString)) {
+    const patternPROFILE = new RegExp("/(?<CUSTOMPROFILE>https?\:\/\/steamcommunity.com\/id\/[A-Za-z_0-9]+)|(?<CUSTOMURL>\/id\/[A-Za-z_0-9]+)|(?<PROFILE>https?\:\/\/steamcommunity.com\/profiles\/[0-9]+)|(?<STEAMID2>STEAM_[10]:[10]:[0-9]+)|(?<STEAMID3>\[U:[10]:[0-9]+\])|(?<STEAMID64>[^\/][0-9]{8,})/g");
+    //const patterID = new RegExp("(?:https?:\\/\\/)?steamcommunity\\.com\\/(?:profiles)\\/[a-zA-Z0-9]+");
+    if (patternPROFILE.test(urlString)) {
         returnString = urlString.substring(urlString.indexOf("s/") + 2);
         var c = returnString.charAt(returnString.length - 1);
         if (c >= '0' && c <= '9') {

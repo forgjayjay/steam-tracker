@@ -35,7 +35,7 @@ input[type=text]{
     padding: 12px 20px;
     text-align: center;
     border-color: rgb(74, 74, 92);
-    border-radius: 10px;
+    border-radius: 30px;
 }
 input[type=submit]{
     width: 6rem;
