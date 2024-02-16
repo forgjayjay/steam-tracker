@@ -1,8 +1,9 @@
 body {
-    background: rgba(30,30,30,255);
+    background: rgb(30,30,30);
     color: rgb(189, 209, 202);
     overflow: hidden;
 }
+
 .tooltip{
     position: absolute;
     top: 85vh;
