@@ -95,7 +95,7 @@ function postLoad() {
     chart.style = 'max-width: ' + jsonData.games.length*10 + 'vw';
     document.querySelector('.lds-ring').style.opacity = 0;
     document.querySelector('.lds-ring').style.position = "absolute";
-    document.querySelector('#min-to-hour').style.opacity = 1;
+    document.querySelector('.checkbox-container').style.opacity = 1;
     document.querySelector('.tooltip').style.opacity = 1;
     document.querySelector('.tooltiptext').style.opacity = 1;
 }
@@ -108,5 +108,13 @@ function min_to_hour() {
         data_seg.innerHTML = map[i];
         map[i] = temp;
         console.log(temp)
+    }
+}
+
+function show_data() {
+    if(document.querySelector('#show-data_checkbox').checked) {
+        $('#chart-1').removeClass('show-data-on-hover');
+    } else{
+        $('#chart-1').addClass('show-data-on-hover');
     }
 }

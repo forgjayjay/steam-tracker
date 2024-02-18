@@ -1,10 +1,12 @@
 #main-container{
     position: absolute;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     margin: -10px;
     height: 100%;
     width: 100%;
+    min-height: 900px;
 }
 
 #lds-container{
@@ -36,12 +38,15 @@
     background-color: rgba(43, 67, 77, 0.2);
 }
 
-#min-to-hour {
+.checkbox-container{
   position: absolute;
-  font-size: 1.2rem;
-  opacity: 0;
   top: 90vh;
   right: 5vw;
+  gap: 0.4rem;
+  font-size: 1.2rem;
+  display: grid;
+  justify-items: end;
+  opacity: 0;
 }
 
 .data{
